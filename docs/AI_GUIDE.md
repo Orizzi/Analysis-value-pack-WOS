@@ -15,9 +15,10 @@ Analyse Whiteout Survival paid packs. Ingest mixed raw sources (Excel/CSV with m
   - `pipeline.py` – top-level run orchestrator.
   - `cli.py`, `__main__.py` – Typer CLI entrypoints.
   - `logging_utils.py`, `settings.py`, `utils.py` – shared helpers.
-- `config/item_values.yaml` – tweakable base values, categories, and scoring bands.
-- `data_raw/` – drop Excel/CSV here (ingestion scans this folder).
-- `data_processed/` – normalized packs/items + valuations JSON.
+- `config/item_values.yaml` - tweakable base values, categories, and scoring bands.
+- `docs/VALUATION_STRATEGY.md`, `docs/GAME_MECHANICS.md`, `docs/IMAGE_ANALYSIS.md` - human context on pricing, game loops, and image handling.
+- `data_raw/` - drop Excel/CSV here (ingestion scans this folder).
+- `data_processed/` - normalized packs/items + valuations JSON.
 - `site_data/` – static-site JSON exports.
 - `images_raw/`, `images_processed/` – extracted and cleaned icons.
 - `logs/` – rotating log files.
@@ -36,25 +37,24 @@ IDs are slugified from names (lowercase, hyphenated).
 ## Ingestion flow (`wos_pack_value.ingestion`)
 
 1. `ingest_all()` (pipeline) scans `data_raw/` for files.
-2. For each file, `parse_file()` dispatches to:
-   - `parse_csv()` – reads CSV via pandas.
-   - `parse_excel()` – uses openpyxl. It expands merged cells, converts each sheet to a DataFrame, and best-effort extracts embedded images (saved to `images_raw/FILE_sheet_img_N.png`). Image anchors are linked to rows when possible.
-3. `_normalize_dataframe()` harmonizes column names (aliases for pack/item/price/quantity/category/currency/tags) and fills defaults.
-4. Rows are grouped into `Pack` objects with `PackItem` children. Source metadata keeps file/sheet and row info.
-5. `build_item_definitions()` dedupes items. Normalized data can be persisted to `data_processed/packs.json` and `items.json` with timestamps.
+2. `parse_file()` dispatches to CSV or Excel.
+   - Excel parser splits sheets into multiple tables by detecting header rows (keywords like Item/Quantity/Total/Cost). Pack headers immediately above a table are used as default pack names.
+   - Embedded images are extracted to `images_raw/FILE_sheet_img_N.png` and row-mapped where anchors allow.
+   - Merged cells are resolved virtually (without mutating the workbook) so merged headers are propagated.
+3. `_normalize_dataframe()` harmonizes columns (pack/item/price/quantity/category/currency/tags, gem-per-unit, token cost, equivalent gem cost) and fills defaults, preferring event/shop names when present.
+4. `_pack_from_rows()`:
+   - Skips summary rows (Gem Total, Pack %, True Pack Value %), but stores summaries in `pack.meta`.
+   - Builds `PackItem`s, capturing `base_value` from gem-per-unit, gem-value, weighted gem value, or `equivalent_gem_cost / quantity`. Token cost and row totals land in `item.meta`.
+5. `build_item_definitions()` dedupes items. Normalized data persists to `data_processed/packs.json` and `items.json` with timestamps.
 
 Column aliases of interest: `pack|bundle|pack_name` -> `pack_name`; `item|items|reward|item_name` -> `item_name`; `qty|quantity|amount` -> `quantity`; `cost|price_usd|price($)` -> `price`; `type|category` -> `category`; `tag|tags` -> `tags`.
 
 ## Valuation (`wos_pack_value.valuation`)
 
-- `load_valuation_config()` loads YAML (or defaults) with:
-  - `items`: per-item base values and category overrides.
-  - `categories`: base values + multipliers for unknown items.
-  - `price_defaults`: default currency and fallback price.
-  - `valuation.ratio_scale`: `target_ratio`, `max_ratio`.
-  - `valuation.score_bands`: list of `{min, label, color}` thresholds.
-- `value_packs()` computes each item value (item override > category default), applies category multipliers, sums totals, derives value/price ratio, maps ratio to 0–100 score (bounded by `max_ratio`), and assigns label/color from bands. Results are returned as `ValuedPack`.
-- `valuate()` wrapper loads processed packs from `data_processed/packs.json` when not provided and optionally persists `valuations.json`.
+- `load_valuation_config()` loads YAML (deep-merged with defaults) including:
+  - `items`, `categories`, `pack_price_hints`, `price_inference`, `price_defaults`, `valuation` bands/scale.
+- `value_packs()` resolution order: per-item override → ingested `base_value` → category default (+ multiplier). Price inference uses pack price → `pack_price_hints` (substring) → gem_total/`gem_value_per_usd` → fallback. Price source is recorded in `pack.meta["price_source"]`.
+- `valuate()` wrapper loads processed packs when needed and optionally persists `valuations.json`.
 
 ## Export (`wos_pack_value.export`)
 
@@ -94,3 +94,4 @@ Column aliases of interest: `pack|bundle|pack_name` -> `pack_name`; `item|items|
 - Directories are created on demand (`ensure_dir`).
 - `data_raw/`, `data_processed/`, and `logs/` are ignored by git except for `.gitkeep` markers to avoid committing large artifacts.
 - For quick runs, point the CLI at `tests/data` (`--raw-dir tests/data`) instead of heavy Excel inputs.
+- When new sheets appear with pack headers above tables, ingestion should auto-detect them; add a regression test mirroring the layout if not.

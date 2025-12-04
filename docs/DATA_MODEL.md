@@ -15,11 +15,11 @@
 - `item_id` (str) – slugified from name.
 - `name` (str)
 - `quantity` (float)
-- `category` (str) – e.g., premium_currency, speedup, shard, resource.
-- `icon` (str|None) – path in `images_raw/` when extracted.
+- `category` (str) - e.g., premium_currency, speedup, shard, resource.
+- `icon` (str|None) - path in `images_raw/` when extracted.
 - `base_value` (float|None)
-- `source_row` (int|None) – Excel row used during ingestion.
-- `meta` (dict)
+- `source_row` (int|None) - Excel row used during ingestion.
+- `meta` (dict) - may include `token_cost`, `equivalent_gem_cost`, `row_total`, `valuation_category`.
 
 ## ItemDefinition
 - `item_id` (str)
@@ -32,13 +32,17 @@
 
 ## PackValuation
 - `pack_id` (str)
-- `total_value` (float) – summed item values after multipliers.
+- `total_value` (float) - summed item values after multipliers.
 - `price` (float)
-- `ratio` (float) – `total_value / price` (0 if price is 0).
-- `score` (float) – 0–100, bounded by `valuation.ratio_scale.max_ratio`.
-- `label` (str) – qualitative bucket from `valuation.score_bands`.
-- `color` (str) – hex string aligned to label.
-- `breakdown` (dict[str, float]) – item_id → item value.
+- `ratio` (float) - `total_value / price` (0 if price is 0).
+- `score` (float) - 0-100, bounded by `valuation.ratio_scale.max_ratio`.
+- `label` (str) - qualitative bucket from `valuation.score_bands`.
+- `color` (str) - hex string aligned to label.
+- `breakdown` (dict[str, float]) - item_id → item value.
+- `meta` on Pack captures optional derived fields:
+  - `gem_total` (float) - pulled from spreadsheets’ “Gem Total” rows.
+  - `pack_pct` / `true_pack_value_pct` - optional summary percentages.
+  - `price_source` - `pack`, `hint:*`, `gem_total`, or `fallback`.
 
 ## JSON export shapes
 

@@ -13,21 +13,22 @@ python -m venv .venv
 Useful commands:
 
 - `python -m wos_pack_value.cli ingest --raw-dir data_raw` – ingestion only.
-- `python -m wos_pack_value.cli value --config config/item_values.yaml` – valuation only (uses processed packs).
-- `python -m wos_pack_value.cli export` – compute valuation then export site JSON.
-- `python -m wos_pack_value.cli sanity` – end-to-end smoke test with a short summary.
-- `pytest` – run tests.
+- `python -m wos_pack_value.cli value --config config/item_values.yaml` - valuation only (uses processed packs).
+- `python -m wos_pack_value.cli export` - compute valuation then export site JSON.
+- `python -m wos_pack_value.cli sanity` - end-to-end smoke test with a short summary.
+- `pytest` - run tests.
 
 ## Project layout
 
 - `wos_pack_value/` – package code (`ingestion`, `valuation`, `export`, CLI, pipeline orchestration).
 - `config/` – tweakable valuation inputs (`item_values.yaml`).
 - `data_raw/` – drop Excel/CSV/JSON inputs here (ingestion scans this folder).
-- `data_processed/` – normalized outputs (`packs.json`, `items.json`, `valuations.json`).
-- `images_raw/`, `images_processed/` – extracted icons and cleaned variants.
-- `site_data/` – JSON exports for the future static site.
-- `logs/` – pipeline logs.
-- `tests/` – sample data and pytest coverage.
+- `data_processed/` - normalized outputs (`packs.json`, `items.json`, `valuations.json`).
+- `images_raw/`, `images_processed/` - extracted icons and cleaned variants.
+- `site_data/` - JSON exports for the future static site.
+- `logs/` - pipeline logs.
+- `tests/` - sample data and pytest coverage.
+- `docs/` - AI guide, data model, valuation strategy, game mechanics, and image-analysis notes.
 
 ## Data flow
 
