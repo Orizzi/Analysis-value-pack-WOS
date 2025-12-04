@@ -1,0 +1,5 @@
+pack_name,price,currency,item_name,quantity,category
+Starter Pack,4.99,USD,Fire Crystal,300,premium_currency
+Starter Pack,4.99,USD,Speedup 60m,2,speedup
+Builder Bundle,9.99,USD,VIP Point,500,vip
+Builder Bundle,9.99,USD,Universal Shard,10,shard
