@@ -1,39 +1,1101 @@
 {
-  "generated_at": "2025-12-04T21:07:50.821176+00:00",
+  "generated_at": "2025-12-04T21:44:42.889521+00:00",
   "items": [
+    {
+      "item_id": "charm-design",
+      "name": "Charm Design",
+      "category": "chief gear/charm",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_1.png",
+      "base_value": 1000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "charm-guide",
+      "name": "Charm Guide",
+      "category": "chief gear/charm",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_2.png",
+      "base_value": 1000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "chief-gear-materials-chest",
+      "name": "Chief Gear Materials Chest",
+      "category": "chief gear/charm",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_3.png",
+      "base_value": 2600.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "chief-gear-variety-chest",
+      "name": "Chief Gear Variety Chest",
+      "category": "chief gear/charm",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_4.png",
+      "base_value": 3370.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "design-plan",
+      "name": "Design Plan",
+      "category": "chief gear/charm",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_5.png",
+      "base_value": 1000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "hardened-alloy",
+      "name": "Hardened Alloy",
+      "category": "chief gear/charm",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_6.png",
+      "base_value": 2.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "polishing-solution",
+      "name": "Polishing Solution",
+      "category": "chief gear/charm",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_7.png",
+      "base_value": 200.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "random-chief-charm-material-chest",
+      "name": "Random Chief Charm Material Chest",
+      "category": "chief gear/charm",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_8.png",
+      "base_value": 3090.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "deployment-capacity-boost-ii-12hrs",
+      "name": "Deployment Capacity Boost II (12hrs)",
+      "category": "combat",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_9.png",
+      "base_value": 20000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "enemy-troops-attack-down-ii-12hrs",
+      "name": "Enemy Troops Attack Down II (12hrs)",
+      "category": "combat",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_10.png",
+      "base_value": 20000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "enemy-troops-defense-down-ii-12hrs",
+      "name": "Enemy Troops Defense Down II (12hrs)",
+      "category": "combat",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_11.png",
+      "base_value": 20000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "troops-attack-up-ii-12hrs",
+      "name": "Troops Attack Up II (12hrs)",
+      "category": "combat",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_12.png",
+      "base_value": 20000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "troops-defense-up-ii-12hrs",
+      "name": "Troops Defense Up II (12hrs)",
+      "category": "combat",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_13.png",
+      "base_value": 20000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "troops-health-up-ii-12hrs",
+      "name": "Troops Health Up II (12hrs)",
+      "category": "combat",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_14.png",
+      "base_value": 20000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "10000-hero-xp",
+      "name": "10000 Hero XP",
+      "category": "hero",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_15.png",
+      "base_value": 300.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "5000-hero-xp",
+      "name": "5000 Hero XP",
+      "category": "hero",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_16.png",
+      "base_value": 150.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "custom-hero-widget",
+      "name": "Custom Hero Widget",
+      "category": "hero",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_17.png",
+      "base_value": 5000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "rare-expedition-skill-manual",
+      "name": "Rare Expedition Skill Manual",
+      "category": "hero",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_18.png",
+      "base_value": 150.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "rare-exploration-manual",
+      "name": "Rare Exploration Manual",
+      "category": "hero",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_19.png",
+      "base_value": 150.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "rare-general-hero-shard",
+      "name": "Rare General Hero Shard",
+      "category": "hero",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_20.png",
+      "base_value": 500.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "mythic-expedition-skill-manual",
+      "name": "Mythic Expedition Skill Manual",
+      "category": "hero",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_21.png",
+      "base_value": 1000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "mythic-exploration-manual",
+      "name": "Mythic Exploration Manual",
+      "category": "hero",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_22.png",
+      "base_value": 1000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "mythic-general-hero-shard",
+      "name": "Mythic General Hero Shard",
+      "category": "hero",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_23.png",
+      "base_value": 5000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "epic-expedition-skill-manual",
+      "name": "Epic Expedition Skill Manual",
+      "category": "hero",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_24.png",
+      "base_value": 500.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "epic-exploration-manual",
+      "name": "Epic Exploration Manual",
+      "category": "hero",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_25.png",
+      "base_value": 500.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "epic-general-hero-shard",
+      "name": "Epic General Hero Shard",
+      "category": "hero",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_26.png",
+      "base_value": 1000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "100-enhancement-xp-component",
+      "name": "100 Enhancement XP Component",
+      "category": "hero gear",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_27.png",
+      "base_value": 500.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "essence-stones",
+      "name": "Essence Stones",
+      "category": "hero gear",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_28.png",
+      "base_value": 2500.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "mithril",
+      "name": "Mithril",
+      "category": "hero gear",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_29.png",
+      "base_value": 10000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "custom-mythic-hero-gear-chest",
+      "name": "Custom Mythic Hero Gear Chest",
+      "category": "hero gear",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_30.png",
+      "base_value": 120000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "lucky-hero-gear-chest",
+      "name": "Lucky Hero Gear Chest",
+      "category": "hero gear",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_31.png",
+      "base_value": 2000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "advanced-teleporter",
+      "name": "Advanced Teleporter",
+      "category": "other",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_32.png",
+      "base_value": 4000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "transfer-pass",
+      "name": "Transfer Pass",
+      "category": "other",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_33.png",
+      "base_value": 15000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "gold-key",
+      "name": "Gold Key",
+      "category": "other",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_34.png",
+      "base_value": 1500.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "advanced-wild-mark",
+      "name": "Advanced Wild Mark",
+      "category": "pet",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_35.png",
+      "base_value": 6000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "common-wild-mark",
+      "name": "Common Wild Mark",
+      "category": "pet",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_36.png",
+      "base_value": 500.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "pet-advancement-materials-custom-chest",
+      "name": "Pet Advancement Materials Custom Chest",
+      "category": "pet",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_37.png",
+      "base_value": 3000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "energizing-potion",
+      "name": "Energizing Potion",
+      "category": "pet",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_38.png",
+      "base_value": 1500.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "strengthening-serum",
+      "name": "Strengthening Serum",
+      "category": "pet",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_39.png",
+      "base_value": 3000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "taming-manual",
+      "name": "Taming Manual",
+      "category": "pet",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_40.png",
+      "base_value": 300.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "pet-food-x-1",
+      "name": "Pet Food x 1",
+      "category": "pet",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_41.png",
+      "base_value": 2.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "chief-stamina",
+      "name": "Chief stamina",
+      "category": "resources",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_42.png",
+      "base_value": 300.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "coal-10k",
+      "name": "Coal 10k",
+      "category": "resources",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_43.png",
+      "base_value": 25.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "food-10k",
+      "name": "Food 10k",
+      "category": "resources",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_44.png",
+      "base_value": 5.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "iron-10k",
+      "name": "Iron 10k",
+      "category": "resources",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_45.png",
+      "base_value": 100.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "lv1-custom-resource-chest",
+      "name": "Lv1 Custom Resource Chest",
+      "category": "resources",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_46.png",
+      "base_value": 5.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "lv2-custom-resource-chest",
+      "name": "Lv2 Custom Resource Chest",
+      "category": "resources",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_47.png",
+      "base_value": 50.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "lv3-custom-resource-chest",
+      "name": "Lv3 Custom Resource Chest",
+      "category": "resources",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_48.png",
+      "base_value": 337.5,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "steel",
+      "name": "Steel",
+      "category": "resources",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_49.png",
+      "base_value": 0.5,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "wood-10k",
+      "name": "Wood 10k",
+      "category": "resources",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_50.png",
+      "base_value": 5.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "vip-points-x-1",
+      "name": "VIP Points x 1",
+      "category": "resources",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_51.png",
+      "base_value": 2.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "gem",
+      "name": "Gem",
+      "category": "resources",
+      "icon": null,
+      "base_value": 1.0,
+      "description": null,
+      "meta": {}
+    },
     {
       "item_id": "fire-crystal",
       "name": "Fire Crystal",
-      "category": "premium_currency",
-      "icon": null,
-      "base_value": null,
+      "category": "special resource",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_52.png",
+      "base_value": 500.0,
       "description": null,
       "meta": {}
     },
     {
-      "item_id": "speedup-60m",
-      "name": "Speedup 60m",
+      "item_id": "fire-crystal-chest",
+      "name": "Fire Crystal Chest",
+      "category": "special resource",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_53.png",
+      "base_value": 6400.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "fire-crystal-shard",
+      "name": "Fire Crystal Shard",
+      "category": "special resource",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_54.png",
+      "base_value": 300.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "1m-general-speedup",
+      "name": "1m General Speedup",
       "category": "speedup",
       "icon": null,
-      "base_value": null,
+      "base_value": 13.0,
       "description": null,
       "meta": {}
     },
     {
-      "item_id": "vip-point",
-      "name": "VIP Point",
-      "category": "vip",
+      "item_id": "5m-general-speedup",
+      "name": "5m General Speedup",
+      "category": "speedup",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_55.png",
+      "base_value": 66.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "1h-general-speedup",
+      "name": "1h General Speedup",
+      "category": "speedup",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_56.png",
+      "base_value": 800.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "3h-general-speedup",
+      "name": "3h General Speedup",
+      "category": "speedup",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_57.png",
+      "base_value": 2400.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "8h-general-speedup",
+      "name": "8h General Speedup",
+      "category": "speedup",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_58.png",
+      "base_value": 6400.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "mythic-general-decoration-component",
+      "name": "Mythic General Decoration Component",
+      "category": "island decoration",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_59.png",
+      "base_value": 12000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "avatar-frame-permanent",
+      "name": "Avatar Frame (Permanent)",
+      "category": "other",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_60.png",
+      "base_value": 25000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "lucky-chip",
+      "name": "Lucky Chip",
+      "category": "event item",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_61.png",
+      "base_value": 1500.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "gourmet-bag",
+      "name": "Gourmet Bag",
+      "category": "event item",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Event Shop Item Evaluator_library_img_62.png",
+      "base_value": 15.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "city-skin-windmill-village",
+      "name": "City Skin (Windmill Village)",
+      "category": "unknown",
       "icon": null,
       "base_value": null,
       "description": null,
       "meta": {}
     },
     {
-      "item_id": "universal-shard",
-      "name": "Universal Shard",
-      "category": "shard",
+      "item_id": "city-skin-forgetown",
+      "name": "City Skin (Forgetown)",
+      "category": "unknown",
       "icon": null,
       "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "march-skin-brute-mammoth",
+      "name": "March Skin (Brute Mammoth)",
+      "category": "unknown",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "march-skin-snowmobile",
+      "name": "March Skin (Snowmobile)",
+      "category": "unknown",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "emote-fiesta",
+      "name": "Emote: Fiesta",
+      "category": "unknown",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "ski-resort-lv1",
+      "name": "Ski Resort Lv1",
+      "category": "unknown",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "teleport-skin",
+      "name": "Teleport Skin",
+      "category": "unknown",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "avatar-frame",
+      "name": "Avatar Frame",
+      "category": "unknown",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "dawn-custom-city-skin",
+      "name": "Dawn Custom City Skin",
+      "category": "unknown",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "dawn-custom-march-skin",
+      "name": "Dawn Custom March Skin",
+      "category": "unknown",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "unknown-item",
+      "name": "Unknown Item",
+      "category": "unknown",
+      "icon": null,
+      "base_value": NaN,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "item",
+      "name": "Item",
+      "category": "unknown",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "total-equivalent-gem",
+      "name": "Total Equivalent Gem",
+      "category": "unknown",
+      "icon": null,
+      "base_value": NaN,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "gems",
+      "name": "Gems",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 1.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "vip",
+      "name": "VIP",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 2.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "gift-i",
+      "name": "Gift I",
+      "category": "unknown",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "design-plans",
+      "name": "Design Plans",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 1000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "1h-speedup",
+      "name": "1h Speedup",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 800.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "custome-hero-widget",
+      "name": "Custome Hero Widget",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 5000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "1h-troop-speed",
+      "name": "1h Troop speed",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 800.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "5m-troop-speed",
+      "name": "5m Troop speed",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 66.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "1h-research-speed",
+      "name": "1h Research speed",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 800.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "5m-research-speed",
+      "name": "5m Research speed",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 66.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "1h-construction-speed",
+      "name": "1h Construction speed",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 800.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "5m-construction-speed",
+      "name": "5m Construction speed",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 66.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "hero-shards",
+      "name": "Hero shards",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 5000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "fire-crystal-weekly-card",
+      "name": "Fire Crystal Weekly Card",
+      "category": "unknown",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "30-day-vip",
+      "name": "30 day VIP",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 10000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "stamina",
+      "name": "Stamina",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 300.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "pet-food",
+      "name": "Pet Food",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 2.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "1h-speed",
+      "name": "1h speed",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 800.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "5m-speed",
+      "name": "5m speed",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 66.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "1m-speed",
+      "name": "1m speed",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 13.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "artisan-s-trove-sublime",
+      "name": "Artisan's Trove (Sublime)",
+      "category": "unknown",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Packs True Value Calculator_all-packs-summary_img_45.png",
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "custom-pet-chest-pet-advancement-materials-custom-chest",
+      "name": "Custom Pet Chest (Pet Advancement Materials Custom Chest)",
+      "category": "unknown",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "custom-pet-chest-common-wild-mark",
+      "name": "Custom Pet Chest (Common Wild Mark)",
+      "category": "unknown",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "custom-pet-chest-advanced-wild-mark",
+      "name": "Custom Pet Chest (Advanced Wild Mark)",
+      "category": "unknown",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "deals",
+      "name": "Deals",
+      "category": "unknown",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "100k-resource-supply-chest",
+      "name": "100K Resource Supply Chest",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 337.5,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "pet-benefits-card",
+      "name": "Pet Benefits Card",
+      "category": "unknown",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "pet-advancement-materials",
+      "name": "Pet Advancement Materials",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 3000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "hero-gear-benefits-card",
+      "name": "Hero Gear Benefits Card",
+      "category": "unknown",
+      "icon": "D:\\CODE\\Projet\\Analysis value pack WOS\\images_raw\\Packs True Value Calculator_all-packs-summary_img_49.png",
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "building-benefits-card",
+      "name": "Building Benefits Card",
+      "category": "unknown",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "pack-value",
+      "name": "Pack Value %",
+      "category": "unknown",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "mythic-decoration",
+      "name": "Mythic Decoration",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 110000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "fire-crystals",
+      "name": "Fire Crystals",
+      "category": "fc & hero gear",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "100-enhancement-exp-component",
+      "name": "100 Enhancement EXP Component",
+      "category": "fc & hero gear",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "general-1h-speedup",
+      "name": "General 1h Speedup",
+      "category": "fc & hero gear",
+      "icon": null,
+      "base_value": null,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "molly-s-shard",
+      "name": "Molly's Shard",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 5000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "hardened-steel",
+      "name": "Hardened Steel",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 2.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "general-accessory-construction-contract",
+      "name": "General Accessory Construction Contract",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 20000.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "mystery-badge",
+      "name": "Mystery Badge",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 10.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "1h-construction-speedup",
+      "name": "1h Construction Speedup",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 800.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "5m-construction-speedup",
+      "name": "5m Construction Speedup",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 66.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "1h-troop-speedup",
+      "name": "1h Troop Speedup",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 800.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "5m-troop-speedup",
+      "name": "5m Troop Speedup",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 66.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "1h-research-speedup",
+      "name": "1h Research Speedup",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 800.0,
+      "description": null,
+      "meta": {}
+    },
+    {
+      "item_id": "5m-research-speedup",
+      "name": "5m Research Speedup",
+      "category": "unknown",
+      "icon": null,
+      "base_value": 66.0,
       "description": null,
       "meta": {}
     }
