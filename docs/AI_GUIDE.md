@@ -1,0 +1,96 @@
+# AI Guide – PackWhiteoutSurvivalPackValue
+
+If context ever disappears, load this file first. It contains enough detail for an AI to recreate or extend the project.
+
+## Purpose
+
+Analyse Whiteout Survival paid packs. Ingest mixed raw sources (Excel/CSV with merged cells and embedded icons), normalize packs/items, compute value scores based on configurable item values, and export JSON for a static website.
+
+## Repository layout
+
+- `wos_pack_value/`
+  - `ingestion/` – file scanning and tabular parsers (`tabular.py`, `pipeline.py`).
+  - `valuation/` – config loader and scoring engine (`config.py`, `engine.py`, `pipeline.py`).
+  - `export/` – site-facing JSON writer (`json_export.py`).
+  - `pipeline.py` – top-level run orchestrator.
+  - `cli.py`, `__main__.py` – Typer CLI entrypoints.
+  - `logging_utils.py`, `settings.py`, `utils.py` – shared helpers.
+- `config/item_values.yaml` – tweakable base values, categories, and scoring bands.
+- `data_raw/` – drop Excel/CSV here (ingestion scans this folder).
+- `data_processed/` – normalized packs/items + valuations JSON.
+- `site_data/` – static-site JSON exports.
+- `images_raw/`, `images_processed/` – extracted and cleaned icons.
+- `logs/` – rotating log files.
+- `tests/` – fixtures (`tests/data/sample_packs.csv`) and pytest coverage.
+
+## Core data model
+
+- `Pack` – `pack_id`, `name`, `price`, `currency`, `source_file`, `source_sheet`, `tags`, `items`, `meta`.
+- `PackItem` – `item_id`, `name`, `quantity`, `category`, `icon`, `base_value`, `source_row`, `meta`.
+- `ItemDefinition` – deduped item metadata (id, name, category, icon, base_value).
+- `PackValuation` – totals per pack (`total_value`, `price`, `ratio`, `score`, `label`, `color`, `breakdown`).
+- `ValuedPack` – bundle of `Pack` + `PackValuation`.
+
+IDs are slugified from names (lowercase, hyphenated).
+
+## Ingestion flow (`wos_pack_value.ingestion`)
+
+1. `ingest_all()` (pipeline) scans `data_raw/` for files.
+2. For each file, `parse_file()` dispatches to:
+   - `parse_csv()` – reads CSV via pandas.
+   - `parse_excel()` – uses openpyxl. It expands merged cells, converts each sheet to a DataFrame, and best-effort extracts embedded images (saved to `images_raw/FILE_sheet_img_N.png`). Image anchors are linked to rows when possible.
+3. `_normalize_dataframe()` harmonizes column names (aliases for pack/item/price/quantity/category/currency/tags) and fills defaults.
+4. Rows are grouped into `Pack` objects with `PackItem` children. Source metadata keeps file/sheet and row info.
+5. `build_item_definitions()` dedupes items. Normalized data can be persisted to `data_processed/packs.json` and `items.json` with timestamps.
+
+Column aliases of interest: `pack|bundle|pack_name` -> `pack_name`; `item|items|reward|item_name` -> `item_name`; `qty|quantity|amount` -> `quantity`; `cost|price_usd|price($)` -> `price`; `type|category` -> `category`; `tag|tags` -> `tags`.
+
+## Valuation (`wos_pack_value.valuation`)
+
+- `load_valuation_config()` loads YAML (or defaults) with:
+  - `items`: per-item base values and category overrides.
+  - `categories`: base values + multipliers for unknown items.
+  - `price_defaults`: default currency and fallback price.
+  - `valuation.ratio_scale`: `target_ratio`, `max_ratio`.
+  - `valuation.score_bands`: list of `{min, label, color}` thresholds.
+- `value_packs()` computes each item value (item override > category default), applies category multipliers, sums totals, derives value/price ratio, maps ratio to 0–100 score (bounded by `max_ratio`), and assigns label/color from bands. Results are returned as `ValuedPack`.
+- `valuate()` wrapper loads processed packs from `data_processed/packs.json` when not provided and optionally persists `valuations.json`.
+
+## Export (`wos_pack_value.export`)
+
+- `export_site_json()` writes:
+  - `site_data/packs.json`: pack metadata, items, valuation totals, ratio, score, label, color.
+  - `site_data/items.json`: deduped item definitions (from ingestion or derived on the fly).
+- Each file carries `generated_at` timestamps. Shapes are designed for static consumption with a red→green mapping via `label/color/score`.
+
+## Pipeline orchestration
+
+- `run_pipeline()` wires ingestion → valuation → export with logging configured.
+- CLI (`python -m wos_pack_value.cli`):
+  - `run` – full pipeline.
+  - `ingest` – ingestion only (supports `--raw-dir` override).
+  - `value` – valuation only (uses processed packs).
+  - `export` – valuation + export.
+  - `sanity` – end-to-end smoke test printing top scores.
+
+## Testing
+
+- Pytest configured via `pyproject.toml`.
+- Fixtures in `tests/data/sample_packs.csv`.
+- Tests cover ingestion grouping, valuation scoring >0, and JSON export creation.
+- Run with `pytest` (uses tmp dirs; no real data needed).
+
+## Extension tips
+
+- To add new item valuations, edit `config/item_values.yaml` (`items` or `categories`).
+- To support new file formats, extend `parse_file()` dispatch or add specialized parsers.
+- If Excel headers differ, adjust `COLUMN_ALIASES` or enhance `_normalize_dataframe`.
+- For more precise scoring, refine `_score_from_ratio` or add event-based multipliers in config.
+- To persist more metadata (e.g., event tags), extend `Pack.meta` and update exports accordingly.
+
+## Operational notes
+
+- Logs rotate at `logs/run.log` (console + file).
+- Directories are created on demand (`ensure_dir`).
+- `data_raw/`, `data_processed/`, and `logs/` are ignored by git except for `.gitkeep` markers to avoid committing large artifacts.
+- For quick runs, point the CLI at `tests/data` (`--raw-dir tests/data`) instead of heavy Excel inputs.
