@@ -1,0 +1,63 @@
+# Base values for individual items (amounts are per unit).
+items:
+  Fire Crystal:
+    base_value: 1.0
+    category: premium_currency
+    description: Premium currency typically purchased directly.
+  "VIP Point":
+    base_value: 0.02
+    category: vip
+  "Speedup 60m":
+    base_value: 0.4
+    category: speedup
+  "Speedup 3h":
+    base_value: 1.0
+    category: speedup
+  "Universal Shard":
+    base_value: 0.35
+    category: shard
+  "Epic Hero Shard":
+    base_value: 0.55
+    category: shard
+  "Legendary Hero Shard":
+    base_value: 0.75
+    category: shard
+
+# Category-level defaults applied when an item is unknown.
+categories:
+  premium_currency:
+    base_value: 1.0
+    multiplier: 1.0
+  speedup:
+    base_value: 0.35
+    multiplier: 1.0
+  resource:
+    base_value: 0.00005
+    multiplier: 1.0
+  vip:
+    base_value: 0.02
+    multiplier: 1.0
+  shard:
+    base_value: 0.25
+    multiplier: 1.0
+  cosmetic:
+    base_value: 0.1
+    multiplier: 1.2
+  unknown:
+    base_value: 0.0
+    multiplier: 1.0
+
+price_defaults:
+  currency: USD
+  fallback_price: 0.0
+
+valuation:
+  ratio_scale:
+    target_ratio: 6.0     # ratio considered "fair"
+    max_ratio: 12.0       # cap when computing score
+  score_bands:
+    - {min: 0, label: "Trash", color: "#d11141"}
+    - {min: 25, label: "Bad", color: "#f37735"}
+    - {min: 50, label: "Okay", color: "#ffc425"}
+    - {min: 70, label: "Good", color: "#00b159"}
+    - {min: 85, label: "Excellent", color: "#00a388"}

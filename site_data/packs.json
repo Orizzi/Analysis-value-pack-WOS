@@ -1,0 +1,77 @@
+{
+  "generated_at": "2025-12-04T21:07:50.819174+00:00",
+  "packs": [
+    {
+      "id": "starter-pack-4-99-sample-packs",
+      "name": "Starter Pack",
+      "price": {
+        "amount": 4.99,
+        "currency": "USD"
+      },
+      "source": {
+        "file": "tests\\data\\sample_packs.csv",
+        "sheet": null
+      },
+      "tags": [],
+      "items": [
+        {
+          "id": "fire-crystal",
+          "name": "Fire Crystal",
+          "quantity": 300.0,
+          "category": "premium_currency",
+          "icon": null,
+          "value": 300.0
+        },
+        {
+          "id": "speedup-60m",
+          "name": "Speedup 60m",
+          "quantity": 2.0,
+          "category": "speedup",
+          "icon": null,
+          "value": 0.8
+        }
+      ],
+      "value": 300.8,
+      "price_to_value": 60.28,
+      "score": 100.0,
+      "label": "Excellent",
+      "color": "#00a388"
+    },
+    {
+      "id": "builder-bundle-9-99-sample-packs",
+      "name": "Builder Bundle",
+      "price": {
+        "amount": 9.99,
+        "currency": "USD"
+      },
+      "source": {
+        "file": "tests\\data\\sample_packs.csv",
+        "sheet": null
+      },
+      "tags": [],
+      "items": [
+        {
+          "id": "vip-point",
+          "name": "VIP Point",
+          "quantity": 500.0,
+          "category": "vip",
+          "icon": null,
+          "value": 10.0
+        },
+        {
+          "id": "universal-shard",
+          "name": "Universal Shard",
+          "quantity": 10.0,
+          "category": "shard",
+          "icon": null,
+          "value": 3.5
+        }
+      ],
+      "value": 13.5,
+      "price_to_value": 1.35,
+      "score": 11.26,
+      "label": "Trash",
+      "color": "#d11141"
+    }
+  ]
+}
