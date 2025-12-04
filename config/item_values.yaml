@@ -61,3 +61,15 @@ valuation:
     - {min: 50, label: "Okay", color: "#ffc425"}
     - {min: 70, label: "Good", color: "#00b159"}
     - {min: 85, label: "Excellent", color: "#00a388"}
+
+# Fuzzy pack price hints (lowercase substring match).
+pack_price_hints:
+  fire crystal pack: 4.99
+  molly's blessing: 4.99
+  fast development pack: 9.99
+  charm design pack: 9.99
+  jasser's blessing: 9.99
+
+price_inference:
+  use_gem_total_when_missing: true
+  gem_value_per_usd: 300    # how many gem-value units correspond to $1 (adjust as needed)

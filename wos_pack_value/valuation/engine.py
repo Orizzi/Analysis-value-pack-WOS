@@ -22,6 +22,8 @@ def _item_value(item, config: Dict) -> Tuple[float, str]:
         category = item_cfg.get("category", category) or category
         base_value = float(item_cfg.get("base_value", 0.0))
         value = base_value * float(item.quantity)
+    elif item.base_value is not None:
+        value = float(item.base_value) * float(item.quantity)
     else:
         cat_cfg = categories.get(category, {}) or categories.get("unknown", {})
         base_value = cat_cfg.get("base_value")
@@ -50,6 +52,35 @@ def _label_for_score(score: float, config: Dict) -> Tuple[str, str]:
     return selected.get("label", "Unknown"), selected.get("color", "#999999")
 
 
+def _infer_price(pack: Pack, config: Dict) -> Tuple[float, str]:
+    price = float(pack.price or 0.0)
+    source = "pack"
+    if price <= 0:
+        hints = config.get("pack_price_hints", {}) or {}
+        name_lower = pack.name.lower()
+        for key, hint_price in hints.items():
+            if key.lower() in name_lower:
+                price = float(hint_price)
+                source = f"hint:{key}"
+                break
+
+    if price <= 0:
+        inference_cfg = config.get("price_inference", {}) or {}
+        if inference_cfg.get("use_gem_total_when_missing"):
+            gem_total = pack.meta.get("gem_total")
+            rate = float(inference_cfg.get("gem_value_per_usd", 0) or 0)
+            if gem_total and rate:
+                price = float(gem_total) / rate
+                source = "gem_total"
+
+    if price <= 0:
+        price = float(config.get("price_defaults", {}).get("fallback_price", 0.0))
+        source = "fallback"
+
+    pack.meta["price_source"] = source
+    return price, source
+
+
 def value_packs(packs: List[Pack], config: Dict) -> List[ValuedPack]:
     valued: List[ValuedPack] = []
     for pack in packs:
@@ -60,7 +91,7 @@ def value_packs(packs: List[Pack], config: Dict) -> List[ValuedPack]:
             item.meta["valuation_category"] = category
             breakdown[item.item_id] = val
             total += val
-        price = float(pack.price or config.get("price_defaults", {}).get("fallback_price", 0.0))
+        price, _ = _infer_price(pack, config)
         ratio = total / price if price else 0.0
         score = _score_from_ratio(ratio, config)
         label, color = _label_for_score(score, config)
@@ -77,4 +108,3 @@ def value_packs(packs: List[Pack], config: Dict) -> List[ValuedPack]:
         valued.append(ValuedPack(pack=pack, valuation=valuation))
     logger.info("Valuated %s packs", len(valued))
     return valued
-

@@ -19,6 +19,8 @@ DEFAULT_CONFIG: Dict[str, Any] = {
         "unknown": {"base_value": 0.0, "multiplier": 1.0},
     },
     "price_defaults": {"currency": "USD", "fallback_price": 0.0},
+    "pack_price_hints": {},
+    "price_inference": {"use_gem_total_when_missing": True, "gem_value_per_usd": 300},
     "valuation": {
         "ratio_scale": {"target_ratio": 5.0, "max_ratio": 10.0},
         "score_bands": [
@@ -32,13 +34,21 @@ DEFAULT_CONFIG: Dict[str, Any] = {
 }
 
 
+def _deep_update(base: Dict[str, Any], updates: Dict[str, Any]) -> Dict[str, Any]:
+    for key, value in updates.items():
+        if isinstance(value, dict) and isinstance(base.get(key), dict):
+            base[key] = _deep_update(base[key], value)
+        else:
+            base[key] = value
+    return base
+
+
 def load_valuation_config(path: Path | None = None) -> Dict[str, Any]:
     cfg_path = path or DEFAULT_CONFIG_PATH
     if cfg_path.exists():
         with cfg_path.open("r", encoding="utf-8") as f:
             data = yaml.safe_load(f) or {}
-        config = DEFAULT_CONFIG.copy()
-        config.update({k: v for k, v in data.items() if v is not None})
+        config = _deep_update(DEFAULT_CONFIG.copy(), {k: v for k, v in data.items() if v is not None})
         return config
     logger.warning("Config file %s missing; using defaults", cfg_path)
     return DEFAULT_CONFIG
