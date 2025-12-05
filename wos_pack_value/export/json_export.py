@@ -9,6 +9,7 @@ from typing import Iterable, List, Optional
 from ..analysis.summaries import generate_all_pack_summaries
 from ..analysis.item_categories import load_item_category_config, aggregate_category_values
 from ..analysis.game_profiles import GameProfile
+from ..analysis.planner_presets import load_planner_presets
 from ..models.domain import ItemDefinition, Pack, ValuedPack
 from ..settings import DEFAULT_SITE_ITEMS, DEFAULT_SITE_PACKS, DEFAULT_SITE_REFERENCES, SITE_DATA_DIR
 from ..utils import ensure_dir, save_json, timestamp
@@ -112,6 +113,17 @@ def export_site_json(
             "items": [{**item.dict(), "game": game_key, "game_label": game_label} for item in items_payload],
         },
     )
+    # planner presets export
+    presets = load_planner_presets(game=game)
+    if presets:
+        save_json(
+            site_dir / "planner_presets.json",
+            {
+                "game": game_key,
+                "game_label": game_label,
+                "presets": [preset.__dict__ for preset in presets],
+            },
+        )
     reference_path = None
     if reference_mode == "separate" and reference_packs:
         ref_payload = [

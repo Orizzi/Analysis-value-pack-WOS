@@ -34,6 +34,10 @@
 - `meta` (dict)
 - `game` (str) - game key on exports.
 
+## Knowledge exports (site_data/knowledge/)
+- `all_entities.json` – list of KnowledgeEntity objects with fields: `id`, `game`, `entity_type`, `name`, `source`, `source_detail`, `tags`, `attributes`, `raw`.
+- `item_links.json` – mapping of item ids/names to related knowledge entity ids for lightweight linking.
+
 ## PackValuation
 - `pack_id` (str)
 - `total_value` (float) - summed item values after multipliers.

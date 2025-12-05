@@ -14,6 +14,7 @@ One-stop toolkit to ingest, value, rank, and explore Whiteout Survival packs (Ex
 - **History & diffs**: Optional snapshots of `site_data` (`--history-root`) and a diff command (`wos-pack-value history-diff`) to list new/removed/changed packs between runs.
 - **Auto-update helper**: `wos-pack-value auto-update` runs the pipeline (with analysis/history) and commits export changes with a standard message (supports dry-run).
 - **Game profiles**: Config is game-aware; commands accept `--game` to use per-game overrides (default: Whiteout Survival).
+- **Knowledge ingestion (optional)**: `wos-pack-value build-knowledge` can ingest community data (local wosnerdwarriors clones, wosnerds/wiki pages) into `site_data/knowledge/` for future analysis.
 - **Docs & tests**: Human and AI guides, sample data in `examples/`, and pytest coverage.
 
 ## Quickstart

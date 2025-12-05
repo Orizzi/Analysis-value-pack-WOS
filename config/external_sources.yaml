@@ -1,0 +1,19 @@
+games:
+  whiteout_survival:
+    github:
+      local_root: "data_external/wosnerdwarriors"
+      include_repos:
+        - "*"
+      table_patterns:
+        - "**/*.xlsx"
+        - "**/*.xls"
+        - "**/*.csv"
+    websites:
+      wosnerds:
+        base_url: "https://wosnerds.com"
+        enabled: true
+        paths: []
+      wiki:
+        base_url: "https://whiteoutsurvival.wiki"
+        enabled: true
+        paths: []

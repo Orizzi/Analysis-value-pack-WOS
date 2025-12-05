@@ -149,13 +149,29 @@ def plan(
     profile: str = typer.Option("default", help="Planner profile (reserved for future use)"),
     profiles_path: Optional[Path] = typer.Option(None, help="Path to player profiles config"),
     game: Optional[str] = typer.Option(None, help="Game key to use (default from config/game_profiles.yaml)"),
+    preset: Optional[str] = typer.Option(None, help="Planner preset key (type=budget)"),
 ):
     """Suggest packs to buy under a budget using existing rankings."""
     from .analysis.budget_planner import load_site_data, plan_budget, export_plan_json
     from .analysis.player_profiles import get_profile
+    from .analysis.planner_presets import load_planner_presets, find_preset
 
     configure_logging()
     game_profile = _resolve_game_or_exit(game)
+    if preset:
+        presets = load_planner_presets(game=game_profile)
+        preset_obj = find_preset(presets, preset)
+        if not preset_obj:
+            available = ", ".join([p.key for p in presets]) or "none"
+            typer.echo(f"Unknown preset '{preset}'. Available: {available}")
+            raise typer.Exit(code=1)
+        if preset_obj.type != "budget":
+            typer.echo(f"Preset '{preset}' is type '{preset_obj.type}' and cannot be used with budget planner.")
+            raise typer.Exit(code=1)
+        budget = budget if budget is not ... else preset_obj.budget or budget
+        currency = currency if currency != "USD" or not preset_obj.currency else preset_obj.currency
+        profile = profile if profile != "default" or not preset_obj.profile else preset_obj.profile
+        include_reference = include_reference if include_reference else bool(preset_obj.include_reference)
     if budget <= 0:
         typer.echo("Budget must be greater than 0.")
         raise typer.Exit(code=1)
@@ -214,13 +230,35 @@ def goal(
     output_file: Optional[Path] = typer.Option(None, help="Optional JSON output path for the goal plan"),
     profiles_path: Optional[Path] = typer.Option(None, help="Path to player profiles config"),
     game: Optional[str] = typer.Option(None, help="Game key to use (default from config/game_profiles.yaml)"),
+    preset: Optional[str] = typer.Option(None, help="Planner preset key (type=goal)"),
 ):
     """Plan purchases to reach a target item amount within a budget."""
     from .analysis.goal_planner import plan_for_goal, export_goal_plan_json
     from .analysis.player_profiles import get_profile
+    from .analysis.planner_presets import load_planner_presets, find_preset
 
     configure_logging()
     game_profile = _resolve_game_or_exit(game)
+    if preset:
+        presets = load_planner_presets(game=game_profile)
+        preset_obj = find_preset(presets, preset)
+        if not preset_obj:
+            available = ", ".join([p.key for p in presets]) or "none"
+            typer.echo(f"Unknown preset '{preset}'. Available: {available}")
+            raise typer.Exit(code=1)
+        if preset_obj.type != "goal":
+            typer.echo(f"Preset '{preset}' is type '{preset_obj.type}' and cannot be used with goal planner.")
+            raise typer.Exit(code=1)
+        target = target if target else (preset_obj.target_name or target)
+        amount = amount if amount is not ... else (preset_obj.target_amount or amount)
+        if budget is None and preset_obj.budget is not None:
+            budget = preset_obj.budget
+        if currency == "USD" and preset_obj.currency:
+            currency = preset_obj.currency
+        if profile == "default" and preset_obj.profile:
+            profile = preset_obj.profile
+        if not include_reference and preset_obj.include_reference is not None:
+            include_reference = bool(preset_obj.include_reference)
     if not target or amount <= 0:
         typer.echo("Target and amount are required (amount must be > 0).")
         raise typer.Exit(code=1)
@@ -388,6 +426,75 @@ def auto_update(
         game_key=game_profile.key,
     )
     raise typer.Exit(code)
+
+
+@app.command()
+def build_knowledge(
+    site_dir: Path = typer.Option(SITE_DATA_DIR, help="Output directory for knowledge exports"),
+    game: Optional[str] = typer.Option(None, help="Game key to use (default from config/game_profiles.yaml)"),
+    github_root: Optional[Path] = typer.Option(None, help="Local root of cloned GitHub repos (wosnerdwarriors)"),
+    no_github: bool = typer.Option(False, help="Skip GitHub ingestion"),
+    no_web: bool = typer.Option(False, help="Skip web scraping ingestion"),
+    wosnerds_paths: Optional[str] = typer.Option(None, help="Comma-separated paths to scrape on wosnerds.com"),
+    wiki_paths: Optional[str] = typer.Option(None, help="Comma-separated paths to scrape on wiki"),
+):
+    """Build knowledge base (heroes/buildings/etc.) from external sources and export JSON."""
+    from .knowledge.config import load_external_sources_config
+    from .knowledge.github_ingestion import extract_knowledge_from_github_root
+    from .knowledge.web_scraping import scrape_wosnerds, scrape_wiki
+    from .knowledge.loader import save_knowledge_entities
+    from .knowledge.linking import build_item_to_knowledge_links
+    from .knowledge.schemas import KnowledgeEntity
+    from .utils import load_json, ensure_dir
+
+    configure_logging()
+    game_profile = _resolve_game_or_exit(game)
+    cfg = load_external_sources_config(game=game_profile)
+
+    entities: list[KnowledgeEntity] = []
+    gh_cfg = cfg.get("github", {}) or {}
+    gh_root = github_root or (Path(gh_cfg.get("local_root")) if gh_cfg.get("local_root") else None)
+    if not no_github and gh_root:
+        patterns = gh_cfg.get("table_patterns", ["**/*.xlsx", "**/*.csv"])
+        entities.extend(extract_knowledge_from_github_root(game_profile.key, gh_root, patterns))
+
+    web_cfg = cfg.get("websites", {}) or {}
+    if not no_web:
+        wos_cfg = web_cfg.get("wosnerds", {}) or {}
+        if wos_cfg.get("enabled") and wos_cfg.get("base_url"):
+            paths = wosnerds_paths.split(",") if wosnerds_paths else wos_cfg.get("paths", [])
+            try:
+                entities.extend(scrape_wosnerds(game_profile.key, wos_cfg["base_url"], paths or []))
+            except Exception as exc:  # pragma: no cover - network-dependent
+                typer.echo(f"wosnerds scraping failed: {exc}")
+        wiki_cfg = web_cfg.get("wiki", {}) or {}
+        if wiki_cfg.get("enabled") and wiki_cfg.get("base_url"):
+            paths = wiki_paths.split(",") if wiki_paths else wiki_cfg.get("paths", [])
+            try:
+                entities.extend(scrape_wiki(game_profile.key, wiki_cfg["base_url"], paths or []))
+            except Exception as exc:  # pragma: no cover - network-dependent
+                typer.echo(f"wiki scraping failed: {exc}")
+
+    # Export knowledge
+    knowledge_dir = site_dir / "knowledge"
+    ensure_dir(knowledge_dir)
+    save_knowledge_entities(knowledge_dir / "all_entities.json", entities)
+
+    # Optional linking to items
+    links = {}
+    packs_path = site_dir / DEFAULT_SITE_PACKS.name
+    items_path = site_dir / DEFAULT_SITE_ITEMS.name
+    if items_path.exists():
+        items_data = load_json(items_path).get("items", [])
+        links = build_item_to_knowledge_links(items_data, entities)
+        from .utils import save_json
+
+        save_json(
+            knowledge_dir / "item_links.json",
+            {"game": game_profile.key, "links": links},
+        )
+
+    typer.echo(f"Knowledge entities: {len(entities)}; item links: {len(links)}")
 
 
 @app.command()
