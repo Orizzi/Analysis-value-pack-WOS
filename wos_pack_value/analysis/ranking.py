@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 from .player_profiles import PlayerProfile, get_profile
+from .game_profiles import GameProfile, resolve_config_path
 from ..settings import (
     DEFAULT_ANALYSIS_CONFIG_PATH,
     DEFAULT_SITE_ANALYSIS_BY_CATEGORY,
@@ -23,8 +24,8 @@ from ..utils import ensure_dir, load_json, save_json
 logger = logging.getLogger(__name__)
 
 
-def load_analysis_config(path: Path | None = None) -> Dict:
-    cfg_path = path or DEFAULT_ANALYSIS_CONFIG_PATH
+def load_analysis_config(path: Path | None = None, game: GameProfile | None = None) -> Dict:
+    cfg_path = path or (resolve_config_path("analysis.yaml", game) if game else DEFAULT_ANALYSIS_CONFIG_PATH)
     if cfg_path.exists():
         return load_json(cfg_path) if cfg_path.suffix.lower() == ".json" else __load_yaml(cfg_path)
     return {

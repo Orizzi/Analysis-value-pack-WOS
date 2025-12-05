@@ -9,7 +9,8 @@ from typing import Any, Dict, List, Optional
 
 import yaml
 
-from ..settings import DEFAULT_ITEM_CATEGORIES_PATH
+from ..analysis.game_profiles import GameProfile, resolve_config_path
+from ..settings import CONFIG_DIR, DEFAULT_ITEM_CATEGORIES_PATH
 
 
 @dataclass
@@ -23,8 +24,8 @@ class ItemCategoryConfig:
     categories: Dict[str, CategoryRule] = field(default_factory=dict)
 
 
-def load_item_category_config(path: Path | None = None) -> ItemCategoryConfig:
-    cfg_path = path or DEFAULT_ITEM_CATEGORIES_PATH
+def load_item_category_config(path: Path | None = None, game: GameProfile | None = None) -> ItemCategoryConfig:
+    cfg_path = path or (resolve_config_path("item_categories.yaml", game, CONFIG_DIR) if game else DEFAULT_ITEM_CATEGORIES_PATH)
     if not cfg_path.exists():
         return ItemCategoryConfig()
     with cfg_path.open("r", encoding="utf-8") as f:

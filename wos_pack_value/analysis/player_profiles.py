@@ -8,6 +8,7 @@ from typing import Dict
 
 import yaml
 
+from ..analysis.game_profiles import GameProfile, resolve_config_path
 from ..settings import DEFAULT_PLAYER_PROFILES_PATH
 
 
@@ -18,8 +19,8 @@ class PlayerProfile:
     weights: Dict[str, float]
 
 
-def load_profiles(path: Path | None = None) -> Dict[str, PlayerProfile]:
-    cfg_path = path or DEFAULT_PLAYER_PROFILES_PATH
+def load_profiles(path: Path | None = None, game: GameProfile | None = None) -> Dict[str, PlayerProfile]:
+    cfg_path = path or (resolve_config_path("player_profiles.yaml", game) if game else DEFAULT_PLAYER_PROFILES_PATH)
     if not cfg_path.exists():
         # Minimal default profile
         return {
@@ -39,8 +40,8 @@ def load_profiles(path: Path | None = None) -> Dict[str, PlayerProfile]:
     return profiles
 
 
-def get_profile(name: str | None, config_path: Path | None = None) -> PlayerProfile:
-    profiles = load_profiles(config_path)
+def get_profile(name: str | None, config_path: Path | None = None, game: GameProfile | None = None) -> PlayerProfile:
+    profiles = load_profiles(config_path, game=game)
     if not name:
         return profiles["default"]
     profile = profiles.get(name)

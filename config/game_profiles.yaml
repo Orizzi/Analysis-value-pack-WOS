@@ -1,0 +1,7 @@
+default_game: "whiteout_survival"
+
+games:
+  whiteout_survival:
+    label: "Whiteout Survival"
+    description: "Default configuration for Whiteout Survival packs."
+    config_dir: "config/games/whiteout_survival"

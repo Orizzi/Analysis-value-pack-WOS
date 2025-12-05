@@ -8,6 +8,7 @@ from typing import Any, Dict
 
 import yaml
 
+from ..analysis.game_profiles import GameProfile, resolve_config_path
 from ..settings import DEFAULT_CONFIG_PATH
 
 logger = logging.getLogger(__name__)
@@ -52,8 +53,8 @@ def _deep_update(base: Dict[str, Any], updates: Dict[str, Any]) -> Dict[str, Any
     return base
 
 
-def load_valuation_config(path: Path | None = None) -> Dict[str, Any]:
-    cfg_path = path or DEFAULT_CONFIG_PATH
+def load_valuation_config(path: Path | None = None, game: GameProfile | None = None) -> Dict[str, Any]:
+    cfg_path = path or (resolve_config_path("item_values.yaml", game) if game else DEFAULT_CONFIG_PATH)
     if cfg_path.exists():
         with cfg_path.open("r", encoding="utf-8") as f:
             data = yaml.safe_load(f) or {}
