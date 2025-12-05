@@ -108,7 +108,7 @@ def parse_ocr_text_to_pack(text: str, source_file: Path, default_currency: str =
         source_sheet=None,
         tags=[],
         items=items,
-        meta={"price_source": "ocr" if price else "ocr|unpriced"},
+        meta={"price_source": "ocr" if price else "ocr|unpriced", "ingestion_source": "ocr"},
     )
 
 

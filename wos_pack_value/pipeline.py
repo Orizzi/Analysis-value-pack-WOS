@@ -39,12 +39,15 @@ def run_pipeline(
     use_ocr: bool = False,
     screenshots_dir: Path | None = None,
     ocr_lang: str = "eng",
-    ) -> Tuple[List[ValuedPack], Dict]:
+    ingestion_config_path: Path | None = None,
+    reference_mode_override: str | None = None,
+    summary_only: bool = False,
+) -> Tuple[List[ValuedPack], Dict]:
     configure_logging(log_file=log_file)
     logger.info("Starting pipeline")
-    ingestion_config = load_ingestion_config()
+    ingestion_config = load_ingestion_config(ingestion_config_path)
     ref_handling = ingestion_config.get("reference_handling", {})
-    ref_mode = ref_handling.get("mode", "tag")
+    ref_mode = reference_mode_override or ref_handling.get("mode", "tag")
     packs, item_defs = ingest_all(
         raw_dir=raw_dir or DATA_RAW_DIR,
         processed_dir=processed_dir or DATA_PROCESSED_DIR,
@@ -52,7 +55,9 @@ def run_pipeline(
         use_ocr=use_ocr,
         screenshots_dir=screenshots_dir or SCREENSHOTS_DIR,
         ocr_lang=ocr_lang,
-        ingestion_config_path=None,
+        ingestion_config_path=ingestion_config_path,
+        ingestion_config_data=ingestion_config,
+        persist=not summary_only,
     )
     reference_packs = [p for p in packs if p.is_reference]
     normal_packs = [p for p in packs if not p.is_reference]
@@ -64,12 +69,31 @@ def run_pipeline(
         valuations_path=valuations_path,
         processed_path=(processed_dir or DATA_PROCESSED_DIR) / DEFAULT_PROCESSED_PACKS.name,
     )
-    export_site_json(
-        valued_packs=valued,
-        items=item_defs,
-        site_dir=site_dir or SITE_DATA_DIR,
-        reference_mode=ref_mode,
-        reference_packs=reference_packs,
+    if not summary_only:
+        export_site_json(
+            valued_packs=valued,
+            items=item_defs,
+            site_dir=site_dir or SITE_DATA_DIR,
+            reference_mode=ref_mode,
+            reference_packs=reference_packs,
+        )
+
+    summary = {
+        "packs_total": len(packs),
+        "packs_reference": len(reference_packs),
+        "packs_valuated": len(valuation_input),
+        "items_total": sum(len(p.items) for p in packs),
+        "reference_mode": ref_mode,
+        "use_ocr": use_ocr,
+    }
+    logger.info(
+        "Run summary: packs=%s (reference=%s, valuated=%s) items=%s ref_mode=%s ocr=%s",
+        summary["packs_total"],
+        summary["packs_reference"],
+        summary["packs_valuated"],
+        summary["items_total"],
+        ref_mode,
+        use_ocr,
     )
     logger.info("Pipeline finished")
     return valued, config

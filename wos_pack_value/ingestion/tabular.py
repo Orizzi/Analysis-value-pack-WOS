@@ -277,6 +277,7 @@ def _pack_from_rows(
                 is_reference=is_reference,
                 tags=tags,
                 items=[],
+                meta={"ingestion_source": "tabular"},
             )
             packs[pack_id] = pack
 

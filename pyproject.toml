@@ -1,3 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wos-pack-value"
+version = "0.1.0"
+description = "Whiteout Survival pack value toolkit"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pandas>=2.2.0",
+    "openpyxl>=3.1.0",
+    "pillow>=10.0.0",
+    "pydantic<2.0.0",
+    "pyyaml>=6.0.0",
+    "typer>=0.9.0",
+    "pytest>=7.4.0",
+]
+
+[project.optional-dependencies]
+ocr = ["pytesseract>=0.3.10"]
+
+[project.scripts]
+wos-pack-value = "wos_pack_value.cli:main"
+
 [tool.pytest.ini_options]
 pythonpath = ["."]
 addopts = "-ra"

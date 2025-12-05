@@ -25,9 +25,13 @@ def run(
     use_ocr_screenshots: bool = typer.Option(False, help="Enable OCR ingestion from screenshots directory"),
     screenshots_dir: Optional[Path] = typer.Option(None, help="Path to screenshots for OCR"),
     ocr_lang: str = typer.Option("eng", help="Language code for OCR (pytesseract)"),
+    ingestion_config: Optional[Path] = typer.Option(None, help="Path to ingestion config (reference handling)"),
+    reference_mode: Optional[str] = typer.Option(None, help="Override reference handling mode (tag/exclude/separate)"),
+    summary_only: bool = typer.Option(False, help="Run without writing outputs; print summary"),
+    log_file: Optional[Path] = typer.Option(None, help="Optional log file path"),
 ):
     """Run ingestion + valuation + export."""
-    configure_logging()
+    configure_logging(log_file=log_file)
     run_pipeline(
         config_path=config,
         raw_dir=raw_dir,
@@ -35,6 +39,10 @@ def run(
         use_ocr=use_ocr_screenshots,
         screenshots_dir=screenshots_dir,
         ocr_lang=ocr_lang,
+        ingestion_config_path=ingestion_config,
+        reference_mode_override=reference_mode,
+        summary_only=summary_only,
+        log_file=log_file,
     )
 
 

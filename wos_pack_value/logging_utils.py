@@ -30,4 +30,3 @@ def configure_logging(log_file: Optional[Path] = None, level: int = logging.INFO
     handlers.append(file_handler)
 
     logging.basicConfig(level=level, handlers=handlers, force=True)
-

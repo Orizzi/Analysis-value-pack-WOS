@@ -48,11 +48,12 @@ def ingest_all(
     screenshots_dir: Path | None = None,
     ocr_lang: str = "eng",
     ingestion_config_path: Path | None = None,
+    ingestion_config_data: dict | None = None,
 ) -> Tuple[List[Pack], List[ItemDefinition]]:
     ensure_dir(raw_dir)
     ensure_dir(processed_dir)
     ensure_dir(images_dir)
-    ingestion_config = load_ingestion_config(ingestion_config_path)
+    ingestion_config = ingestion_config_data or load_ingestion_config(ingestion_config_path)
     ref_config = ingestion_config.get("reference_handling", {})
 
     packs: List[Pack] = []
