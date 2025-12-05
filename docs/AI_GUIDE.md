@@ -52,8 +52,8 @@ Column aliases of interest: `pack|bundle|pack_name` -> `pack_name`; `item|items|
 ## Valuation (`wos_pack_value.valuation`)
 
 - `load_valuation_config()` loads YAML (deep-merged with defaults) including:
-  - `items`, `categories`, `pack_price_hints`, `price_inference`, `price_defaults`, `valuation` bands/scale.
-- `value_packs()` resolution order: per-item override → ingested `base_value` → category default (+ multiplier). Price inference uses pack price → `pack_price_hints` (substring) → gem_total/`gem_value_per_usd` → fallback. Price source is recorded in `pack.meta["price_source"]`.
+  - `items`, `categories`, `pack_price_hints`, `price_inference` (gem_value_per_usd, tier snapping), `price_defaults`, `valuation` bands/scale.
+- `value_packs()` resolution order: per-item override → ingested `base_value` → category default (+ multiplier). Price inference uses pack price → `pack_price_hints` (substring) → gem_total/`gem_value_per_usd` → fallback, then snaps to the nearest configured tier when enabled. Price source (with snap info) is recorded in `pack.meta["price_source"]`.
 - `valuate()` wrapper loads processed packs when needed and optionally persists `valuations.json`.
 
 ## Export (`wos_pack_value.export`)

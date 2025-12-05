@@ -9,7 +9,8 @@
 - `pack_price_hints`: fuzzy (substring) matching from config to set a default tier when price is missing.
 - `price_inference.gem_value_per_usd`: when `gem_total` is present in `pack.meta` (e.g., from spreadsheets with “Gem Total”), price is inferred as `gem_total / gem_value_per_usd`.
 - `price_defaults.fallback_price`: used only if no hints or gem totals exist.
-- Price source is recorded in `pack.meta["price_source"]`.
+- `price_inference.tiers`: per-currency tier lists (e.g., USD: 0.99/4.99/9.99…, EUR: 5.99/10.99/21.99…) used to snap inferred prices to realistic store values. Controlled by `snap_to_tiers` and `snap_max_delta`.
+- Price source (including snap info) is recorded in `pack.meta["price_source"]`.
 
 ## Item value resolution
 1. **Per-item override** (`items` in config) – includes optional category override.
@@ -23,6 +24,7 @@
 ## Practical knobs to tune
 - Adjust `items` or `categories` when community consensus shifts (e.g., shard valuation, speedups).
 - Update `pack_price_hints` when a new pack’s tier is known; otherwise increase `gem_value_per_usd` to make gem-based inference more conservative.
+- Tune `price_inference.tiers` (add EUR/GBP/etc. lists) and `snap_max_delta` to control how aggressively prices are snapped to known store tiers.
 - Add event-specific multipliers (e.g., holiday shops) by extending `categories` with contextual multipliers and tagging items accordingly.
 
 ## Data captured from current raw files

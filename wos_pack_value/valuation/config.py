@@ -20,7 +20,16 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     },
     "price_defaults": {"currency": "USD", "fallback_price": 0.0},
     "pack_price_hints": {},
-    "price_inference": {"use_gem_total_when_missing": True, "gem_value_per_usd": 300},
+    "price_inference": {
+        "use_gem_total_when_missing": True,
+        "gem_value_per_usd": 300,
+        "snap_to_tiers": True,
+        "snap_max_delta": 3.0,
+        "tiers": [
+            {"name": "usd_default", "currency": "USD", "prices": [0.99, 2.99, 4.99, 9.99, 14.99, 19.99, 24.99, 49.99, 74.99, 99.99]},
+            {"name": "eur_default", "currency": "EUR", "prices": [5.99, 10.99, 21.99, 54.99, 109.99]},
+        ],
+    },
     "valuation": {
         "ratio_scale": {"target_ratio": 5.0, "max_ratio": 10.0},
         "score_bands": [

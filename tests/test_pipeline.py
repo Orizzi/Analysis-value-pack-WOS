@@ -98,5 +98,6 @@ def test_price_inference_from_hints():
     config = load_valuation_config()
     config["pack_price_hints"]["test pack"] = 10.0
     valued = value_packs([pack], config=config)
-    assert valued[0].valuation.price == 10.0
-    assert valued[0].pack.meta.get("price_source", "")[:4] in {"hint", "gem"}
+    # price hint 10.0 should snap to nearest USD tier 9.99
+    assert abs(valued[0].valuation.price - 9.99) < 0.05
+    assert "snap" in valued[0].pack.meta.get("price_source", "")
