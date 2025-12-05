@@ -83,6 +83,7 @@ Column aliases of interest: `pack|bundle|pack_name` -> `pack_name`; `item|items|
   - `site_data/items.json`: deduped item definitions (from ingestion or derived on the fly).
 - Each file carries `generated_at` timestamps. Shapes are designed for static consumption with a red→green mapping via `label/color/score`.
 - `analysis/summaries.py` builds deterministic short summaries per pack; the summary text is embedded in `packs.json` (field `summary`).
+- `analysis/goal_planner.py` finds combinations of packs to reach a target item quantity; exposed via `wos-pack-value goal`.
 
 ## Pipeline orchestration
 

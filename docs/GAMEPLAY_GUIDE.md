@@ -28,6 +28,7 @@ Players who want to decide which Whiteout Survival packs are “worth it,” com
 - **I care about VIP/long-term strength:** look at VIP-focused ranks/scores; check overall rank as a secondary metric.
 - **I have a fixed budget:** run the budget planner to get a shortlist (it picks top value-per-dollar packs greedily within your budget).
 - **Use player profiles:** try `wos-pack-value analyze --profile f2p` for profile-focused ranks or `wos-pack-value plan --profile f2p --budget ...` to bias recommendations toward your priorities (profiles live in `config/player_profiles.yaml`).
+- **Chasing a specific item:** use the goal planner, e.g., `wos-pack-value goal --site-dir site_data --target "Hero X Shard" --amount 100 --budget 80 --profile f2p` to pick the cheapest-per-unit packs that deliver that item within your budget.
 
 ## Limitations & caveats
 - Values depend on assumptions in `config/item_values.yaml`, tier hints, and `gem_value_per_usd`.

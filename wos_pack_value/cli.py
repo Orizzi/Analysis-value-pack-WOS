@@ -178,6 +178,78 @@ def plan(
 
 
 @app.command()
+def goal(
+    site_dir: Optional[Path] = typer.Option(None, help="Directory containing site_data exports"),
+    target: str = typer.Option(..., help="Target item name or id (substring match)"),
+    amount: float = typer.Option(..., help="Desired amount of the target item"),
+    budget: Optional[float] = typer.Option(None, help="Maximum budget; if omitted, planner minimizes cost to reach target"),
+    currency: str = typer.Option("USD", help="Currency label (display only)"),
+    profile: str = typer.Option("default", help="Player profile for tie-breaking"),
+    include_reference: bool = typer.Option(False, help="Include reference/library packs"),
+    output_file: Optional[Path] = typer.Option(None, help="Optional JSON output path for the goal plan"),
+    profiles_path: Optional[Path] = typer.Option(None, help="Path to player profiles config"),
+):
+    """Plan purchases to reach a target item amount within a budget."""
+    from .analysis.goal_planner import plan_for_goal, export_goal_plan_json
+    from .analysis.player_profiles import get_profile
+
+    configure_logging()
+    if not target or amount <= 0:
+        typer.echo("Target and amount are required (amount must be > 0).")
+        raise typer.Exit(code=1)
+    site_dir_path = site_dir or Path("site_data")
+    profile_obj = get_profile(profile, config_path=profiles_path)
+    try:
+        result = plan_for_goal(
+            site_dir=site_dir_path,
+            target_name=target,
+            target_amount=amount,
+            budget=budget,
+            currency=currency,
+            include_reference=include_reference,
+            profile=profile_obj,
+        )
+    except FileNotFoundError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(code=1)
+
+    typer.echo("Goal planner")
+    typer.echo(f"  Target item: {target}")
+    typer.echo(f"  Requested amount: {amount}")
+    typer.echo(f"  Budget: {budget if budget is not None else 'None'} {currency}")
+    typer.echo(f"  Profile: {profile_obj.name}")
+    typer.echo(f"  Packs considered: {result.summary.considered}, excluded: {result.summary.excluded}")
+    if not result.selected:
+        typer.echo("No packs selected.")
+    else:
+        typer.echo("Selected packs:")
+        for idx, p in enumerate(result.selected, start=1):
+            cpu = p.cost_per_unit if p.cost_per_unit != float("inf") else None
+            cpu_display = f"{cpu:.4f}" if cpu is not None else "n/a"
+            typer.echo(
+                f"  {idx}) {p.name} – price: {p.price:.2f}, target qty: {p.target_quantity:.2f}, cost/unit: {cpu_display}"
+            )
+    typer.echo("Summary:")
+    typer.echo(f"  Total target amount from plan: {result.summary.target_amount_obtained}")
+    typer.echo(f"  Total spent: {result.summary.total_spent:.2f}")
+    if result.summary.remaining_budget is not None:
+        typer.echo(f"  Remaining budget: {result.summary.remaining_budget:.2f}")
+    if result.summary.effective_cost_per_unit is not None:
+        typer.echo(f"  Effective cost per unit (target): {result.summary.effective_cost_per_unit:.4f} {currency}")
+    if result.summary.notes:
+        typer.echo("Notes:")
+        for n in result.summary.notes:
+            typer.echo(f"  - {n}")
+
+    if output_file:
+        output_path = output_file
+    else:
+        output_path = site_dir_path / "goal_plan.json"
+    export_goal_plan_json(result, output_path=output_path, profile=profile_obj.name)
+    typer.echo(f"Goal plan written to {output_path}")
+
+
+@app.command()
 def sanity():
     """Quick sanity run with console logging."""
     configure_logging(level=logging.INFO)

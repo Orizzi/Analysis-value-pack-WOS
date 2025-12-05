@@ -8,7 +8,7 @@ One-stop toolkit to ingest, value, rank, and explore Whiteout Survival packs (Ex
 - **Analysis/Ranking**: Configurable weights produce overall and category-focused rankings (`pack_ranking_overall.json`, `pack_ranking_by_category.json`).
 - **CLI**: `wos-pack-value` to run ingestion -> valuation -> export -> analysis; summary-only mode and rich flags for OCR/reference handling.
 - **Pack Explorer**: Static HTML/JS/CSS (no build) that reads JSON exports for filtering/sorting/detail browsing.
-- **Player profiles & planning**: Profile weights (f2p/mid/whale, etc.) influence analysis and the budget planner (`wos-pack-value plan`).
+- **Player profiles & planning**: Profile weights (f2p/mid/whale, etc.) influence analysis and the budget planner (`wos-pack-value plan`), plus a goal planner to reach target items.
 - **Docs & tests**: Human and AI guides, sample data in `examples/`, and pytest coverage.
 
 ## Quickstart
@@ -41,6 +41,7 @@ wos-pack-value run --raw-dir examples --with-analysis
 - After generating exports, open `pack_explorer/pack_explorer.html` to browse rankings (set `window.PACK_EXPLORER_BASE` if JSON lives elsewhere).
 - See `docs/GAMEPLAY_GUIDE.md` for interpreting value per dollar, ranks, category-focused views, and practical buying tips.
 - To get a quick shopping list under a budget, run `wos-pack-value plan --site-dir site_data --budget 50 --currency EUR --profile f2p` (profiles are defined in `config/player_profiles.yaml`).
+- To reach a target item amount, use `wos-pack-value goal --site-dir site_data --target \"Hero X Shard\" --amount 100 --budget 80 --currency EUR --profile f2p`.
 - Basic validation runs during the pipeline and writes `site_data/validation_report.json`; check logs and the report for anomalies.
 
 ## License
