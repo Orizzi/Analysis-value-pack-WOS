@@ -17,6 +17,7 @@ Analyse Whiteout Survival paid packs. Ingest mixed raw sources (Excel/CSV with m
 - `pack_explorer/` - static frontend (HTML/JS/CSS) that reads `site_data` JSONs (packs + rankings) and offers filtering/sorting/detail views. Configurable base path via `window.PACK_EXPLORER_BASE`. See `docs/PACK_EXPLORER.md`.
 - For navigation/rules as an AI agent, read `docs/AGENT_OVERVIEW.md`.
 - Budget planner: `wos-pack-value plan` reads existing exports and suggests packs under a budget (greedy by value_per_dollar). See `docs/GAMEPLAY_GUIDE.md` for the player view.
+- Validation: runs after pipeline to flag missing prices, extreme VPD, unknown items, duplicates. Configurable via `config/validation.yaml`; report at `site_data/validation_report.json`.
   - `valuation/` – config loader and scoring engine (`config.py`, `engine.py`, `pipeline.py`).
   - `export/` – site-facing JSON writer (`json_export.py`).
   - `pipeline.py` – top-level run orchestrator.

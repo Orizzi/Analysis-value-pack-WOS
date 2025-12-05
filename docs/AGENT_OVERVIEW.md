@@ -30,7 +30,8 @@
 - **Analysis**: `wos_pack_value/analysis/ranking.py`; config in `config/analysis.yaml`; outputs `site_data/pack_ranking_overall.json` and `site_data/pack_ranking_by_category.json`.
 - **CLI/glue**: `wos_pack_value/cli.py`, `wos_pack_value/pipeline.py`; console script `wos-pack-value`.
 - **Frontend**: `pack_explorer/` (HTML/JS/CSS) consumes `site_data` JSONs; base path configurable via `window.PACK_EXPLORER_BASE`.
-- Key configs: `config/item_values.yaml`, `config/ingestion.yaml`, `config/analysis.yaml`, `config/player_profiles.yaml`.
+- **Validation**: `wos_pack_value/validation/validator.py`; config in `config/validation.yaml`; writes `site_data/validation_report.json`.
+- Key configs: `config/item_values.yaml`, `config/ingestion.yaml`, `config/analysis.yaml`, `config/player_profiles.yaml`, `config/validation.yaml`.
 
 ## Recipes for AI agents
 - **Support a new input format/layout**: Update `ingestion/tabular.py` (or add a parser), maybe `COLUMN_ALIASES`; add tests under `tests/` (e.g., new Excel fixture); mention in `docs/IMAGE_ANALYSIS.md` or AI guide.

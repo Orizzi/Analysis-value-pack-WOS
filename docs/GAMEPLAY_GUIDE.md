@@ -32,6 +32,7 @@ Players who want to decide which Whiteout Survival packs are “worth it,” com
 - Values depend on assumptions in `config/item_values.yaml`, tier hints, and `gem_value_per_usd`.
 - Time-gated effects, event synergies, opportunity costs, and subjective preferences aren’t fully captured.
 - Rankings are a guide, not absolute truth—tweak configs if your priorities differ.
+- Validation runs after the pipeline; if something looks off, check `site_data/validation_report.json` and the logs for anomalies.
 
 ## Keeping it up to date
 - When the game changes (new packs/items/balance), refresh data and configs:

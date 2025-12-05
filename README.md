@@ -41,6 +41,7 @@ wos-pack-value run --raw-dir examples --with-analysis
 - After generating exports, open `pack_explorer/pack_explorer.html` to browse rankings (set `window.PACK_EXPLORER_BASE` if JSON lives elsewhere).
 - See `docs/GAMEPLAY_GUIDE.md` for interpreting value per dollar, ranks, category-focused views, and practical buying tips.
 - To get a quick shopping list under a budget, run `wos-pack-value plan --site-dir site_data --budget 50 --currency EUR --profile f2p` (profiles are defined in `config/player_profiles.yaml`).
+- Basic validation runs during the pipeline and writes `site_data/validation_report.json`; check logs and the report for anomalies.
 
 ## License
 - License selection is pending. Until a LICENSE is added, treat the repository as "all rights reserved" and coordinate with the maintainer before reuse.

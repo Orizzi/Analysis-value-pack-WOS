@@ -1,0 +1,4 @@
+validation:
+  enabled: true
+  value_per_dollar_threshold_std: 3.0
+  report_filename: "validation_report.json"
