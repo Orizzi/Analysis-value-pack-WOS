@@ -17,6 +17,7 @@ Players who want to decide which Whiteout Survival packs are “worth it,” com
   - **Value per dollar**: total_value / price.
   - **Ranks**: overall rank; category ranks (e.g., shards, VIP, crystals) when available.
   - **Category scores**: how strong the pack is for a focus category.
+- To compare similar packs directly, mark 2–3 cards with **Compare** and open the comparison view to see price, total value, and ranking metrics side by side.
 - Overall ranking = sorted by value per dollar (with a score cap). Category rankings = “best for shards/speedups/etc.”
 - **is_reference** means the sheet/table was a library/lookup, not a buyable pack; usually hidden by default.
 

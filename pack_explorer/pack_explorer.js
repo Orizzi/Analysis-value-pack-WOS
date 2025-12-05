@@ -4,6 +4,7 @@
     packs: [],
     rankings: { overall: {}, byCategory: {} },
     filtered: [],
+    selectedComparison: [],
   };
 
   async function fetchJson(path) {
@@ -70,12 +71,102 @@
     return result;
   }
 
+  function updateSelectionWithLimit(current, id, shouldSelect, maxCount = 3) {
+    const next = current.filter((v) => v !== id);
+    if (shouldSelect) {
+      if (next.length >= maxCount) {
+        next.shift();
+      }
+      next.push(id);
+    }
+    return next;
+  }
+
+  function updateCompareButton() {
+    const btn = document.getElementById("pe-compare-btn");
+    if (!btn) return;
+    const count = state.selectedComparison.length;
+    btn.disabled = count < 2;
+    btn.textContent = count >= 2 ? `Compare (${count})` : "Compare";
+  }
+
+  function handleCompareToggle(packId, shouldSelect) {
+    state.selectedComparison = updateSelectionWithLimit(state.selectedComparison, packId, shouldSelect, 3);
+    renderList();
+    updateCompareButton();
+  }
+
+  function formatPrice(pack) {
+    if (typeof pack.price === "number") return pack.price.toFixed(2);
+    if (pack.price?.amount !== undefined) {
+      const amt = Number(pack.price.amount);
+      const currency = pack.price.currency ? ` ${pack.price.currency}` : "";
+      return `${Number.isFinite(amt) ? amt.toFixed(2) : amt}${currency}`;
+    }
+    return "–";
+  }
+
+  function formatNumber(val, digits = 2) {
+    if (val === null || val === undefined || Number.isNaN(Number(val))) return "–";
+    return Number(val).toFixed(digits);
+  }
+
+  function summarizeCategories(pack) {
+    const entries = Object.entries(pack.category_scores || {});
+    if (!entries.length) return "–";
+    return entries
+      .slice(0, 3)
+      .map(([cat, val]) => `${cat}: #${val.rank ?? "?"} (${formatNumber(val.score, 1)})`)
+      .join(", ");
+  }
+
+  function buildComparisonTable(packs) {
+    const hasProfileScore = packs.some((p) => p.profile_score !== undefined);
+    const rows = [
+      { label: "Price", values: packs.map((p) => formatPrice(p)) },
+      { label: "Total value", values: packs.map((p) => formatNumber(p.total_value ?? p.total ?? p.value ?? 0, 0)) },
+      { label: "Value per dollar", values: packs.map((p) => formatNumber(p.value_per_dollar ?? 0, 2)) },
+      { label: "Overall rank", values: packs.map((p) => p.rank_overall ?? "–") },
+      { label: "Category highlights", values: packs.map((p) => summarizeCategories(p)) },
+    ];
+    if (hasProfileScore) {
+      rows.splice(3, 0, { label: "Profile score", values: packs.map((p) => formatNumber(p.profile_score, 2)) });
+    }
+    const headerCols = packs.map((p) => `<th>${p.name}</th>`).join("");
+    const bodyRows = rows
+      .map((row) => `<tr><td>${row.label}</td>${row.values.map((v) => `<td>${v}</td>`).join("")}</tr>`)
+      .join("");
+    return `
+      <div class="pe-compare-meta">Selected: ${packs.length} packs</div>
+      <div class="pe-compare-table-wrapper">
+        <table class="pe-table pe-compare-table">
+          <thead>
+            <tr><th>Metric</th>${headerCols}</tr>
+          </thead>
+          <tbody>
+            ${bodyRows}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  function showComparisonModal() {
+    const selected = state.selectedComparison.map((id) => state.packs.find((p) => p.id === id)).filter(Boolean);
+    if (selected.length < 2) return;
+    const modal = document.getElementById("pe-compare-modal");
+    const body = document.getElementById("pe-compare-body");
+    body.innerHTML = buildComparisonTable(selected);
+    modal.hidden = false;
+  }
+
   function renderList() {
     const listEl = document.getElementById("pe-list");
     listEl.innerHTML = "";
     state.filtered.forEach((p) => {
       const card = document.createElement("article");
-      card.className = "pe-card";
+      const isSelected = state.selectedComparison.includes(p.id);
+      card.className = `pe-card${isSelected ? " pe-card-selected" : ""}`;
       const refBadge = p.is_reference ? '<span class="pe-chip">Reference</span>' : "";
       const categoryRank = document.getElementById("pe-category").value;
       const focusInfo =
@@ -92,9 +183,16 @@
         </header>
         <div>VPD: <strong>${(p.value_per_dollar ?? 0).toFixed(2)}</strong> | Rank: ${p.rank_overall ?? "?"}</div>
         <div class="pe-muted">Source: ${p.source?.sheet || ""}</div>
-        <button class="pe-btn" data-pack="${p.id}">Details</button>
+        <div class="pe-card-actions">
+          <label class="pe-compare-toggle">
+            <input type="checkbox" data-compare="${p.id}" ${isSelected ? "checked" : ""}/> Compare
+          </label>
+          <button class="pe-btn" data-pack="${p.id}">Details</button>
+        </div>
       `;
       card.querySelector("button").addEventListener("click", () => showModal(p));
+      const compareInput = card.querySelector('input[data-compare]');
+      compareInput.addEventListener("change", (evt) => handleCompareToggle(p.id, evt.target.checked));
       listEl.appendChild(card);
     });
   }
@@ -129,6 +227,12 @@
 
   function bindControls() {
     document.getElementById("pe-modal-close").onclick = () => (document.getElementById("pe-modal").hidden = true);
+    document.getElementById("pe-compare-close").onclick = () => (document.getElementById("pe-compare-modal").hidden = true);
+    document.getElementById("pe-compare-modal").addEventListener("click", (evt) => {
+      if (evt.target.id === "pe-compare-modal") evt.target.hidden = true;
+    });
+    const compareBtn = document.getElementById("pe-compare-btn");
+    compareBtn.addEventListener("click", showComparisonModal);
     const inputs = [
       "pe-search",
       "pe-exclude-ref",
@@ -142,6 +246,7 @@
       document.getElementById(id).addEventListener("input", updateFiltered);
       document.getElementById(id).addEventListener("change", updateFiltered);
     });
+    updateCompareButton();
   }
 
   function updateFiltered() {
@@ -156,6 +261,7 @@
     };
     state.filtered = applyFiltersAndSort(state.packs, filters);
     renderList();
+    updateCompareButton();
   }
 
   async function init() {
@@ -188,5 +294,5 @@
   document.addEventListener("DOMContentLoaded", init);
 
   // Export pure functions for testing
-  window.PackExplorer = { mergePacksWithRankings, applyFiltersAndSort };
+  window.PackExplorer = { mergePacksWithRankings, applyFiltersAndSort, updateSelectionWithLimit };
 })();

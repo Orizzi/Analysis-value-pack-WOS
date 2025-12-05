@@ -11,6 +11,7 @@ from .ingestion.config import load_ingestion_config
 from .ingestion.pipeline import ingest_all
 from .logging_utils import configure_logging
 from .models.domain import ValuedPack
+from .validation.validator import validate_packs_and_items, export_validation_report, load_validation_config
 from .settings import (
     DATA_PROCESSED_DIR,
     DATA_RAW_DIR,
@@ -42,6 +43,7 @@ def run_pipeline(
     ingestion_config_path: Path | None = None,
     reference_mode_override: str | None = None,
     summary_only: bool = False,
+    enable_validation: bool = True,
 ) -> Tuple[List[ValuedPack], Dict]:
     configure_logging(log_file=log_file)
     logger.info("Starting pipeline")
@@ -70,13 +72,36 @@ def run_pipeline(
         processed_path=(processed_dir or DATA_PROCESSED_DIR) / DEFAULT_PROCESSED_PACKS.name,
     )
     if not summary_only:
-    export_site_json(
-        valued_packs=valued,
-        items=item_defs,
-        site_dir=site_dir or SITE_DATA_DIR,
-        reference_mode=ref_mode,
-        reference_packs=reference_packs,
-    )
+        export_site_json(
+            valued_packs=valued,
+            items=item_defs,
+            site_dir=site_dir or SITE_DATA_DIR,
+            reference_mode=ref_mode,
+            reference_packs=reference_packs,
+        )
+        if enable_validation:
+            validation_cfg = load_validation_config()
+            if validation_cfg.get("validation", {}).get("enabled", True):
+                report = validate_packs_and_items(
+                    packs=[vp.pack.dict() for vp in valued],
+                    items=[i.dict() for i in item_defs],
+                    config=validation_cfg,
+                )
+                report_path = export_validation_report(
+                    report,
+                    site_dir=site_dir or SITE_DATA_DIR,
+                    filename=validation_cfg.get("validation", {}).get("report_filename"),
+                )
+                logger.info(
+                    "Validation summary: packs=%s missing_price=%s invalid_price=%s extreme_vpd=%s unknown_items=%s duplicates=%s. Report: %s",
+                    report.summary.total_packs,
+                    report.summary.num_packs_missing_price,
+                    report.summary.num_packs_invalid_price,
+                    report.summary.num_packs_extreme_value_per_dollar,
+                    report.summary.num_unknown_items,
+                    report.summary.num_duplicate_packs,
+                    report_path,
+                )
 
     summary = {
         "packs_total": len(packs),

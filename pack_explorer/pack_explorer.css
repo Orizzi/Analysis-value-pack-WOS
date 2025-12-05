@@ -69,6 +69,25 @@ input, select {
   gap: 8px;
 }
 
+.pe-card-selected {
+  border-color: var(--pe-accent);
+  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.4), 0 6px 14px rgba(0, 0, 0, 0.4);
+}
+
+.pe-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pe-compare-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
 .pe-chip {
   background: rgba(34, 197, 94, 0.15);
   color: var(--pe-accent);
@@ -89,6 +108,13 @@ input, select {
   color: var(--pe-text);
   border-radius: 6px;
   padding: 6px 10px;
+}
+
+.pe-btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: var(--pe-muted);
+  border-color: var(--pe-border);
 }
 
 .pe-btn:hover {
@@ -133,6 +159,13 @@ input, select {
   cursor: pointer;
 }
 
+.pe-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
 .pe-table {
   width: 100%;
   border-collapse: collapse;
@@ -148,4 +181,19 @@ input, select {
 .pe-table th {
   color: var(--pe-muted);
   font-weight: 600;
+}
+
+.pe-compare-table-wrapper {
+  overflow: auto;
+  max-height: 70vh;
+}
+
+.pe-compare-table th, .pe-compare-table td {
+  text-align: center;
+}
+
+.pe-compare-meta {
+  color: var(--pe-muted);
+  margin-bottom: 6px;
+  font-size: 13px;
 }

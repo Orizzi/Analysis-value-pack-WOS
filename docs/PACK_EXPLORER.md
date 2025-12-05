@@ -33,6 +33,7 @@ Static, JS-driven view that reads `site_data/` JSON exports and lets players bro
 - Sorting: rank overall, value per dollar, price, direction toggle.
 - Detail modal: items, values, category scores, reference flag.
 - Category dropdown is populated from `pack_ranking_by_category.json`.
+- Comparison: select 2–3 packs via the “Compare” toggle, then click **Compare** to open a side-by-side table (price, total value, value per dollar, rank, category highlights).
 - For player-facing tips on using rankings, see `docs/GAMEPLAY_GUIDE.md`.
 
 ## Integration notes
@@ -44,3 +45,8 @@ Static, JS-driven view that reads `site_data/` JSON exports and lets players bro
 - Adjust default base path: set `window.PACK_EXPLORER_BASE`.
 - Add new sort options by extending the `pe-sort` `<select>` and logic in `applyFiltersAndSort`.
 - Hook your own analytics by listening to button clicks or extending `pack_explorer.js`.
+
+## Comparison view
+- On each card, tick **Compare** to mark it for side-by-side review (max 3 selected; the oldest selection will drop if you add a fourth).
+- When at least two packs are selected, the **Compare** button activates in the header.
+- Click **Compare** to open the comparison modal showing price, total value, value per dollar, ranks, and category highlights for the selected packs.
