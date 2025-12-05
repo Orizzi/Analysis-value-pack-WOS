@@ -2,9 +2,11 @@
   const basePath = window.PACK_EXPLORER_BASE || "./site_data/";
   const state = {
     packs: [],
+    items: [],
     rankings: { overall: {}, byCategory: {} },
     filtered: [],
     selectedComparison: [],
+    plannerMode: "budget",
   };
 
   async function fetchJson(path) {
@@ -160,6 +162,144 @@
     modal.hidden = false;
   }
 
+  function extractTopCategories(pack, maxCats = 2) {
+    const entries = Object.entries(pack.category_values || {}).sort((a, b) => b[1] - a[1]);
+    return entries.slice(0, maxCats).map(([cat, val]) => `${cat}: ${formatNumber(val, 0)}`).join(", ");
+  }
+
+  function runBudgetPlanner() {
+    const budget = parseFloat(document.getElementById("pe-planner-budget-amount").value) || 0;
+    const currency = document.getElementById("pe-planner-budget-currency").value || "";
+    const includeRef = document.getElementById("pe-planner-budget-ref").checked;
+    const profile = document.getElementById("pe-planner-budget-profile").value?.trim();
+    const resultsEl = document.getElementById("pe-planner-budget-results");
+    const eligible = state.packs.filter((p) => {
+      const price = p.price?.amount ?? p.price ?? 0;
+      if (!price || price <= 0) return false;
+      if (p.is_reference && !includeRef) return false;
+      return true;
+    });
+    eligible.sort((a, b) => {
+      const av = a.value_per_dollar ?? 0;
+      const bv = b.value_per_dollar ?? 0;
+      if (bv !== av) return bv - av;
+      if (profile && a.profile_score !== undefined && b.profile_score !== undefined) {
+        return (b.profile_score || 0) - (a.profile_score || 0);
+      }
+      return 0;
+    });
+    let spent = 0;
+    let totalValue = 0;
+    const selected = [];
+    for (const p of eligible) {
+      const price = p.price?.amount ?? p.price ?? 0;
+      if (spent + price <= budget + 1e-9) {
+        selected.push(p);
+        spent += price;
+        totalValue += p.value ?? 0;
+      }
+    }
+    const effVpd = spent > 0 ? totalValue / spent : 0;
+    const rows = selected
+      .map(
+        (p) =>
+          `<tr><td>${p.name}</td><td>${formatNumber(p.price?.amount ?? p.price ?? 0, 2)} ${p.price?.currency ?? ""}</td><td>${formatNumber(p.value_per_dollar, 2)}</td><td>${extractTopCategories(p)}</td></tr>`
+      )
+      .join("");
+    resultsEl.innerHTML = `
+      <table class="pe-planner-table">
+        <thead><tr><th>Name</th><th>Price</th><th>VPD</th><th>Top categories</th></tr></thead>
+        <tbody>${rows || "<tr><td colspan='4'>No packs fit this budget.</td></tr>"}</tbody>
+      </table>
+      <div class="pe-planner-results">
+        <div>Selected: ${selected.length} packs</div>
+        <div>Spent: ${formatNumber(spent, 2)} / ${formatNumber(budget, 2)} ${currency}</div>
+        <div>Total value: ${formatNumber(totalValue, 2)} | Effective VPD: ${formatNumber(effVpd, 2)}</div>
+      </div>
+    `;
+  }
+
+  function buildTargetMap(targetText) {
+    const t = (targetText || "").trim().toLowerCase();
+    if (!t) return {};
+    const matchingItemIds = new Set(
+      state.items.filter((it) => it.name.toLowerCase().includes(t)).map((it) => it.id || it.item_id || it.name)
+    );
+    if (matchingItemIds.size === 0) return {};
+    const map = {};
+    state.packs.forEach((p) => {
+      let qty = 0;
+      (p.items || []).forEach((it) => {
+        const id = it.id || it.item_id || it.name;
+        if (matchingItemIds.has(id)) {
+          qty += Number(it.quantity || 0);
+        }
+      });
+      if (qty > 0) {
+        map[p.id] = qty;
+      }
+    });
+    return map;
+  }
+
+  function runGoalPlanner() {
+    const target = document.getElementById("pe-planner-goal-target").value || "";
+    const targetAmount = parseFloat(document.getElementById("pe-planner-goal-amount").value) || 0;
+    const budgetInput = document.getElementById("pe-planner-goal-budget").value;
+    const budget = budgetInput ? parseFloat(budgetInput) : null;
+    const currency = document.getElementById("pe-planner-goal-currency").value || "";
+    const includeRef = document.getElementById("pe-planner-goal-ref").checked;
+    const resultsEl = document.getElementById("pe-planner-goal-results");
+    const targetMap = buildTargetMap(target);
+    if (!targetMap || Object.keys(targetMap).length === 0) {
+        resultsEl.innerHTML = "<div class='pe-planner-results'>No items match that target text.</div>";
+        return;
+    }
+    const candidates = state.packs
+      .map((p) => {
+        const qty = targetMap[p.id] || 0;
+        const price = p.price?.amount ?? p.price ?? 0;
+        return { pack: p, qty, price, cpu: qty > 0 && price > 0 ? price / qty : Infinity };
+      })
+      .filter((c) => c.qty > 0 && c.price > 0 && (!c.pack.is_reference || includeRef));
+    candidates.sort((a, b) => a.cpu - b.cpu);
+    const selected = [];
+    let totalQty = 0;
+    let spent = 0;
+    for (const c of candidates) {
+      if (budget !== null && spent + c.price > budget + 1e-9) {
+        continue;
+      }
+      selected.push(c);
+      spent += c.price;
+      totalQty += c.qty;
+      if (totalQty >= targetAmount) break;
+    }
+    const effCpu = totalQty > 0 ? spent / totalQty : 0;
+    const rows = selected
+      .map(
+        (c) =>
+          `<tr><td>${c.pack.name}</td><td>${formatNumber(c.price, 2)} ${c.pack.price?.currency ?? ""}</td><td>${formatNumber(c.qty, 2)}</td><td>${formatNumber(c.cpu, 4)}</td></tr>`
+      )
+      .join("");
+    const note =
+      totalQty >= targetAmount
+        ? "Target reached."
+        : "Target not fully reached with current budget/candidates.";
+    resultsEl.innerHTML = `
+      <table class="pe-planner-table">
+        <thead><tr><th>Name</th><th>Price</th><th>Target qty</th><th>Cost/unit</th></tr></thead>
+        <tbody>${rows || "<tr><td colspan='4'>No packs contain the target item.</td></tr>"}</tbody>
+      </table>
+      <div class="pe-planner-results">
+        <div>Requested: ${formatNumber(targetAmount, 2)} | Obtained: ${formatNumber(totalQty, 2)}</div>
+        <div>Spent: ${budget !== null ? `${formatNumber(spent, 2)} / ${formatNumber(budget, 2)} ${currency}` : formatNumber(spent, 2) + " " + currency}</div>
+        <div>Effective cost/unit: ${totalQty > 0 ? formatNumber(effCpu, 4) : "n/a"} ${currency}</div>
+        <div>${note}</div>
+      </div>
+    `;
+  }
+
   function renderList() {
     const listEl = document.getElementById("pe-list");
     listEl.innerHTML = "";
@@ -207,6 +347,13 @@
           `<tr><td>${it.name}</td><td>${it.quantity}</td><td>${it.category || ""}</td><td>${(it.value || 0).toFixed(2)}</td></tr>`
       )
       .join("");
+    const knowledge = pack.knowledge_summary || {};
+    const heroes = (knowledge.heroes || []).map((h) => h.name).join(", ");
+    const buildings = (knowledge.buildings || []).map((b) => b.name).join(", ");
+    const knowledgeHtml =
+      heroes || buildings
+        ? `<div class="pe-knowledge"><strong>Knowledge</strong><div>${heroes ? "Heroes: " + heroes : ""}</div><div>${buildings ? "Buildings: " + buildings : ""}</div></div>`
+        : "";
     const categoriesHtml = Object.entries(pack.category_scores || {})
       .map(([cat, val]) => `<li>${cat}: score ${val.score?.toFixed?.(2) ?? val.score}, rank #${val.rank ?? "?"}</li>`)
       .join("");
@@ -214,6 +361,7 @@
       <h2>${pack.name}</h2>
       <p class="pe-muted">Price: ${pack.price?.amount ?? pack.price ?? 0} ${pack.price?.currency ?? ""}</p>
       ${summary}
+      ${knowledgeHtml}
       <p>Value per dollar: ${(pack.value_per_dollar ?? 0).toFixed(2)} | Rank overall: ${pack.rank_overall ?? "?"}</p>
       <p>Reference: ${pack.is_reference ? "Yes" : "No"}</p>
       <h3>Items</h3>
@@ -249,6 +397,16 @@
       document.getElementById(id).addEventListener("change", updateFiltered);
     });
     updateCompareButton();
+
+    // Planner bindings
+    const modeSelect = document.getElementById("pe-planner-mode");
+    modeSelect.addEventListener("change", () => {
+      state.plannerMode = modeSelect.value;
+      document.getElementById("pe-planner-budget").hidden = state.plannerMode !== "budget";
+      document.getElementById("pe-planner-goal").hidden = state.plannerMode !== "goal";
+    });
+    document.getElementById("pe-planner-budget-run").addEventListener("click", runBudgetPlanner);
+    document.getElementById("pe-planner-goal-run").addEventListener("click", runGoalPlanner);
   }
 
   function updateFiltered() {
@@ -264,16 +422,24 @@
     state.filtered = applyFiltersAndSort(state.packs, filters);
     renderList();
     updateCompareButton();
+    // Keep planner outputs in sync with latest packs
+    if (state.plannerMode === "budget") {
+      runBudgetPlanner();
+    } else {
+      runGoalPlanner();
+    }
   }
 
   async function init() {
     try {
-      const [packsData, overallData, catData] = await Promise.all([
+      const [packsData, overallData, catData, itemsData] = await Promise.all([
         fetchJson(basePath + "packs.json"),
         fetchJson(basePath + "pack_ranking_overall.json"),
         fetchJson(basePath + "pack_ranking_by_category.json"),
+        fetchJson(basePath + "items.json").catch(() => ({ items: [] })),
       ]);
       const packs = packsData.packs || [];
+      state.items = itemsData.items || [];
       state.packs = mergePacksWithRankings(packs, overallData, catData);
       const catSelect = document.getElementById("pe-category");
       const categories = Object.keys(catData.by_category || {});
@@ -297,4 +463,8 @@
 
   // Export pure functions for testing
   window.PackExplorer = { mergePacksWithRankings, applyFiltersAndSort, updateSelectionWithLimit };
+
+  // Manual planner test tips:
+  // - Budget: set budget to 50, click "Plan budget"; reduce to 10 to see fewer packs; toggle "Include reference" to see refs included.
+  // - Goal: enter "Shard" as target, amount 100, budget 50; check selected packs contain shards and totals make sense. Increase amount or lower budget to trigger "not fully reached".
 })();

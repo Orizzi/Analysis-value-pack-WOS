@@ -10,6 +10,8 @@ from ..analysis.summaries import generate_all_pack_summaries
 from ..analysis.item_categories import load_item_category_config, aggregate_category_values
 from ..analysis.game_profiles import GameProfile
 from ..analysis.planner_presets import load_planner_presets
+from ..knowledge.loader import load_knowledge_entities
+from ..utils import load_json
 from ..models.domain import ItemDefinition, Pack, ValuedPack
 from ..settings import DEFAULT_SITE_ITEMS, DEFAULT_SITE_PACKS, DEFAULT_SITE_REFERENCES, SITE_DATA_DIR
 from ..utils import ensure_dir, save_json, timestamp
@@ -46,6 +48,19 @@ def export_site_json(
     cat_config = load_item_category_config(game=game)
     game_key = game.key if game else "whiteout_survival"
     game_label = game.label if game else "Whiteout Survival"
+    knowledge_dir = site_dir / "knowledge"
+    knowledge_links_path = knowledge_dir / "item_links.json"
+    item_links = {}
+    entity_lookup = {}
+    if knowledge_links_path.exists():
+        try:
+            item_links = load_json(knowledge_links_path).get("links", {})
+            entities_path = knowledge_dir / "all_entities.json"
+            if entities_path.exists():
+                for ent in load_knowledge_entities(entities_path):
+                    entity_lookup[ent.id] = ent
+        except Exception:  # pragma: no cover - optional
+            item_links = {}
     packs_payload = []
     for vp in valued_packs:
         pack = vp.pack
@@ -54,6 +69,18 @@ def export_site_json(
         total_value = float(valuation.total_value or 0.0)
         value_per_dollar = total_value / price if price else 0.0
         category_values: dict[str, float] = aggregate_category_values(pack.items, valuation.breakdown, cat_config)
+        # knowledge aggregation
+        pack_knowledge: dict[str, list] = {}
+        for item in pack.items:
+            links = item_links.get(item.item_id, [])
+            for ent_id in links:
+                ent = entity_lookup.get(ent_id)
+                if not ent:
+                    continue
+                bucket = ent.entity_type + "s" if ent.entity_type else "entities"
+                pack_knowledge.setdefault(bucket, [])
+                if not any(e.get("entity_id") == ent_id for e in pack_knowledge[bucket]):
+                    pack_knowledge[bucket].append({"entity_id": ent_id, "name": ent.name})
         metrics.append(
             {
                 "id": pack.pack_id,
@@ -94,6 +121,7 @@ def export_site_json(
                 "label": valuation.label,
                 "color": valuation.color,
                 "category_values": category_values,
+                "knowledge_summary": pack_knowledge,
             }
         )
 
@@ -110,7 +138,22 @@ def export_site_json(
         items_path,
         {
             "generated_at": timestamp(),
-            "items": [{**item.dict(), "game": game_key, "game_label": game_label} for item in items_payload],
+            "items": [
+                {
+                    **item.dict(),
+                    "game": game_key,
+                    "game_label": game_label,
+                    "knowledge_links": [
+                        {
+                            "entity_id": ent_id,
+                            "entity_type": entity_lookup.get(ent_id).entity_type if entity_lookup.get(ent_id) else None,
+                            "name": entity_lookup.get(ent_id).name if entity_lookup.get(ent_id) else None,
+                        }
+                        for ent_id in item_links.get(item.item_id, [])
+                    ],
+                }
+                for item in items_payload
+            ],
         },
     )
     # planner presets export
