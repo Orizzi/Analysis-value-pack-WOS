@@ -1,0 +1,32 @@
+categories:
+  shards:
+    description: "Hero shards / fragments."
+    match:
+      name_contains:
+        - "shard"
+        - "fragment"
+  speedups:
+    description: "Generic speedups (building/research/training/etc.)."
+    match:
+      name_contains:
+        - "speedup"
+        - "speed up"
+        - "speed-up"
+  vip:
+    description: "VIP points or related items."
+    match:
+      name_contains:
+        - "vip"
+  resources:
+    description: "Basic resource packs."
+    match:
+      name_contains:
+        - "food"
+        - "wood"
+        - "iron"
+        - "stone"
+  crystals:
+    description: "Premium crystal currency."
+    match:
+      name_contains:
+        - "crystal"

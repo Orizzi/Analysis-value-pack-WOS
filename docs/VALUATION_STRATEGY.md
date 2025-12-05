@@ -16,6 +16,7 @@
 ## Analysis and ranking layer
 - Config: `config/analysis.yaml` controls analysis defaults (exclude_reference, min_price, max_value_per_dollar scaling, category weights, focus categories).
 - Metrics per pack: `value_per_dollar`, `overall_score`, `weighted_score`, `category_values`, and focus scores per configured category (e.g., shard, speedup, VIP).
+- Item categories are normalized via `config/item_categories.yaml`; edit that file to retag items (shards/speedups/vip/resources/crystals/etc.). Category totals feed player profiles, summaries, and exports.
 - Outputs: `site_data/pack_ranking_overall.json` (overall ranks) and `site_data/pack_ranking_by_category.json` (per focus category ranks). Reference packs can be excluded via config.
 - Use cases: “best value overall”, “best shard packs”, or “best speedup packs”. Interpretation is still heuristic—values depend on the current valuation config and max VPD scaling.
 

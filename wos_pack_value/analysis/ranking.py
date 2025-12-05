@@ -84,10 +84,13 @@ def _compute_metrics(pack: Dict, category_weights: Dict, focus_categories: List[
     total_value = float(pack.get("value", 0) or 0)
     value_per_dollar = total_value / price if price else 0.0
     category_values: Dict[str, float] = {}
-    for item in pack.get("items", []):
-        cat = item.get("category", "unknown")
-        val = float(item.get("value", 0) or 0)
-        category_values[cat] = category_values.get(cat, 0.0) + val
+    if pack.get("category_values"):
+        category_values = {k: float(v or 0) for k, v in (pack.get("category_values") or {}).items()}
+    else:
+        for item in pack.get("items", []):
+            cat = item.get("category", "unknown")
+            val = float(item.get("value", 0) or 0)
+            category_values[cat] = category_values.get(cat, 0.0) + val
 
     overall_score = min(100.0, (value_per_dollar / max_vpd) * 100.0) if max_vpd else 0.0
     focus_scores: Dict[str, float] = {}

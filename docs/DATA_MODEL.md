@@ -11,6 +11,7 @@
 - `items` (list[`PackItem`])
 - `notes` (str|None)
 - `meta` (dict) - free-form, e.g., event name.
+- `category_values` (dict[str, float]) - aggregated value per normalized category (shards, speedups, vip, resources, crystals, etc.) using `config/item_categories.yaml`. Present in exports.
 
 ## PackItem
 - `item_id` (str) – slugified from name.

@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Iterable, List, Optional
 
 from ..analysis.summaries import generate_all_pack_summaries
+from ..analysis.item_categories import load_item_category_config, aggregate_category_values
 from ..models.domain import ItemDefinition, Pack, ValuedPack
 from ..settings import DEFAULT_SITE_ITEMS, DEFAULT_SITE_PACKS, DEFAULT_SITE_REFERENCES, SITE_DATA_DIR
 from ..utils import ensure_dir, save_json, timestamp
@@ -39,6 +40,7 @@ def export_site_json(
     ensure_dir(site_dir)
     reference_packs = reference_packs or []
     metrics: List[dict] = []
+    cat_config = load_item_category_config()
     packs_payload = []
     for vp in valued_packs:
         pack = vp.pack
@@ -46,11 +48,7 @@ def export_site_json(
         price = float(pack.price or 0.0)
         total_value = float(valuation.total_value or 0.0)
         value_per_dollar = total_value / price if price else 0.0
-        category_values: dict[str, float] = {}
-        for item in pack.items:
-            cat = item.category or "unknown"
-            val = float(valuation.breakdown.get(item.item_id, 0.0))
-            category_values[cat] = category_values.get(cat, 0.0) + val
+        category_values: dict[str, float] = aggregate_category_values(pack.items, valuation.breakdown, cat_config)
         metrics.append(
             {
                 "id": pack.pack_id,

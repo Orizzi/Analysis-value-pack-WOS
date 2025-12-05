@@ -26,6 +26,7 @@ Analyse Whiteout Survival paid packs. Ingest mixed raw sources (Excel/CSV with m
 - `ingestion/ocr_review.py` – loads reviewed OCR packs (`data_review/ocr_packs_reviewed.json`) and dumps raw OCR detections for manual correction (`data_review/ocr_packs_raw.json`). A minimal UI lives in `ocr_review/` to edit/download reviewed JSON.
 - `analysis/announcements.py` – builds Discord/Markdown-friendly summaries of top packs (optionally by profile) from existing exports; surfaced via `wos-pack-value announce`.
 - `history/snapshot.py` and `history/diff.py` – optional history snapshots (`--history-root` on `run`) and diffing packs between snapshots; `wos-pack-value history-diff` reports new/removed/changed packs.
+- `analysis/item_categories.py` + `config/item_categories.yaml` – central item categorization used to build `category_values` for packs; edit YAML to adjust how items map to shards/speedups/vip/resources/crystals/etc.
 - `config/item_values.yaml` - tweakable base values, categories, and scoring bands.
 - `config/player_profiles.yaml` - player profiles (weights for shards/speedups/vip/etc.) used by profile-aware analysis/planning.
 - `docs/VALUATION_STRATEGY.md`, `docs/GAME_MECHANICS.md`, `docs/IMAGE_ANALYSIS.md` - human context on pricing, game loops, and image handling.
