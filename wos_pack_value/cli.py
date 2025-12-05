@@ -256,6 +256,43 @@ def goal(
 
 
 @app.command()
+def announce(
+    site_dir: Optional[Path] = typer.Option(None, help="Directory containing site_data exports"),
+    top_n: int = typer.Option(5, help="Number of packs to include"),
+    profile: Optional[str] = typer.Option(None, help="Optional player profile for sorting"),
+    include_reference: bool = typer.Option(False, help="Include reference/library packs"),
+    output_file: Optional[Path] = typer.Option(None, help="Optional output Markdown file"),
+    title: Optional[str] = typer.Option(None, help="Optional heading override"),
+):
+    """Generate a Discord/Markdown-friendly announcement of top packs."""
+    from .analysis.announcements import load_and_generate_announcement
+
+    configure_logging()
+    site_dir_path = site_dir or Path("site_data")
+    try:
+        text = load_and_generate_announcement(
+            site_dir=site_dir_path,
+            profile_name=profile,
+            top_n=top_n,
+            title=title,
+            include_reference=include_reference,
+        )
+    except FileNotFoundError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(code=1)
+
+    if output_file:
+        output_path = output_file
+        from .utils import save_json
+
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(text, encoding="utf-8")
+        typer.echo(f"Announcement written to {output_path}")
+    else:
+        typer.echo(text)
+
+
+@app.command()
 def sanity():
     """Quick sanity run with console logging."""
     configure_logging(level=logging.INFO)

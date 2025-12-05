@@ -10,6 +10,7 @@ One-stop toolkit to ingest, value, rank, and explore Whiteout Survival packs (Ex
 - **Pack Explorer**: Static HTML/JS/CSS (no build) that reads JSON exports for filtering/sorting/detail browsing.
 - **Player profiles & planning**: Profile weights (f2p/mid/whale, etc.) influence analysis and the budget planner (`wos-pack-value plan`), plus a goal planner to reach target items.
 - **OCR review flow**: Raw OCR packs are dumped to `data_review/ocr_packs_raw.json`; use `ocr_review/ocr_review.html` to correct them and place `ocr_packs_reviewed.json` back for ingestion.
+- **Discord-ready announcements**: Generate Markdown summaries of top packs for a profile with `wos-pack-value announce`.
 - **Docs & tests**: Human and AI guides, sample data in `examples/`, and pytest coverage.
 
 ## Quickstart
