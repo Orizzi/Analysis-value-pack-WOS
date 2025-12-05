@@ -108,6 +108,64 @@ def analyze(
 
 
 @app.command()
+def plan(
+    site_dir: Optional[Path] = typer.Option(None, help="Directory containing site_data exports"),
+    budget: float = typer.Option(..., help="Total budget to allocate"),
+    currency: str = typer.Option("USD", help="Currency label (for display)"),
+    max_count: Optional[int] = typer.Option(None, help="Maximum number of packs to include"),
+    include_reference: bool = typer.Option(False, help="Include reference/library packs"),
+    output_file: Optional[Path] = typer.Option(None, help="Optional JSON output path for the plan"),
+    profile: str = typer.Option("default", help="Planner profile (reserved for future use)"),
+):
+    """Suggest packs to buy under a budget using existing rankings."""
+    from .analysis.budget_planner import load_site_data, plan_budget, export_plan_json
+
+    configure_logging()
+    if budget <= 0:
+        typer.echo("Budget must be greater than 0.")
+        raise typer.Exit(code=1)
+    try:
+        packs = load_site_data(site_dir or None)
+    except FileNotFoundError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(code=1)
+
+    selected, summary = plan_budget(
+        packs=packs,
+        budget=budget,
+        currency=currency,
+        max_count=max_count,
+        include_reference=include_reference,
+    )
+
+    typer.echo(f"Budget planner (profile: {profile}, currency: {currency})")
+    typer.echo(f"Budget: {budget:.2f}")
+    typer.echo(f"Packs considered: {summary.considered}, excluded: {summary.excluded}")
+    if not selected:
+        typer.echo("No packs selected within budget.")
+    else:
+        typer.echo("Selected packs:")
+        for idx, p in enumerate(selected, start=1):
+            typer.echo(
+                f"  {idx}) {p.name} – price: {p.price:.2f}, value: {p.total_value:.2f}, value_per_dollar: {p.value_per_dollar:.2f}, rank: {p.rank_overall or '?'}"
+            )
+    typer.echo(f"Total spent: {summary.total_spent:.2f}")
+    typer.echo(f"Remaining budget: {summary.remaining_budget:.2f}")
+    typer.echo(f"Total value: {summary.total_value:.2f}")
+    typer.echo(f"Average value_per_dollar (selected): {summary.average_value_per_dollar:.2f}")
+
+    if output_file:
+        output_path = output_file
+    elif site_dir:
+        output_path = site_dir / "budget_plan.json"
+    else:
+        output_path = Path("site_data") / "budget_plan.json"
+
+    export_plan_json(selected, summary, output_path=output_path, profile=profile)
+    typer.echo(f"Plan written to {output_path}")
+
+
+@app.command()
 def sanity():
     """Quick sanity run with console logging."""
     configure_logging(level=logging.INFO)

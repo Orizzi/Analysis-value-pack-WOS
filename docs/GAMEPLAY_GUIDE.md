@@ -8,6 +8,7 @@ Players who want to decide which Whiteout Survival packs are “worth it,” com
 - Packs get an inferred price: from the sheet/CSV if present, otherwise inferred using store hints, `gem_value_per_usd`, and snapping to common price tiers (USD/EUR).
 - The key metric is **value per dollar** (or euro): `total_value / price`. Higher is better.
 - Rankings add simple scores (overall and category-focused) so you can see “best overall” or “best shard/speedup/VIP” packs.
+- A budget planner can suggest which packs to buy under a budget: `wos-pack-value plan --site-dir site_data --budget 50 --currency EUR` (after running the pipeline with analysis).
 
 ## Reading the exports / Pack Explorer
 - Important fields in Pack Explorer:
@@ -24,6 +25,7 @@ Players who want to decide which Whiteout Survival packs are “worth it,” com
 - **I have a monthly budget:** sort by value per dollar, enable “top N,” and pick from the top list.
 - **I only buy small packs (e.g., 5.99€):** filter by price range (via Pack Explorer search/filters) and then sort by value per dollar.
 - **I care about VIP/long-term strength:** look at VIP-focused ranks/scores; check overall rank as a secondary metric.
+- **I have a fixed budget:** run the budget planner to get a shortlist (it picks top value-per-dollar packs greedily within your budget).
 
 ## Limitations & caveats
 - Values depend on assumptions in `config/item_values.yaml`, tier hints, and `gem_value_per_usd`.

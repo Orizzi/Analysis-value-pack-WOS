@@ -9,13 +9,14 @@ Analyse Whiteout Survival paid packs. Ingest mixed raw sources (Excel/CSV with m
 ## Repository layout
 
 - `wos_pack_value/`
-- `ingestion/` – file scanning and tabular parsers (`tabular.py`, `pipeline.py`).
-- `ingestion/ocr.py` – optional OCR ingestion of screenshots (pytesseract).
-- `ingestion/config.py` – ingestion config loader (reference handling).
-- `docs/QUICKSTART.md` – concise steps from clone to first run.
+- `ingestion/` - file scanning and tabular parsers (`tabular.py`, `pipeline.py`).
+- `ingestion/ocr.py` - optional OCR ingestion of screenshots (pytesseract).
+- `ingestion/config.py` - ingestion config loader (reference handling).
+- `docs/QUICKSTART.md` - concise steps from clone to first run.
 - `analysis/` - ranking layer reading `site_data` exports and producing pack ranking JSONs.
 - `pack_explorer/` - static frontend (HTML/JS/CSS) that reads `site_data` JSONs (packs + rankings) and offers filtering/sorting/detail views. Configurable base path via `window.PACK_EXPLORER_BASE`. See `docs/PACK_EXPLORER.md`.
 - For navigation/rules as an AI agent, read `docs/AGENT_OVERVIEW.md`.
+- Budget planner: `wos-pack-value plan` reads existing exports and suggests packs under a budget (greedy by value_per_dollar). See `docs/GAMEPLAY_GUIDE.md` for the player view.
   - `valuation/` – config loader and scoring engine (`config.py`, `engine.py`, `pipeline.py`).
   - `export/` – site-facing JSON writer (`json_export.py`).
   - `pipeline.py` – top-level run orchestrator.
