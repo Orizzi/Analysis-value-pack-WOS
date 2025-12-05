@@ -1,0 +1,25 @@
+profiles:
+  default:
+    description: "Baseline profile using generic value_per_dollar."
+    weights: {}
+  f2p:
+    description: "Free-to-play or low spender: prioritizes shards and speedups."
+    weights:
+      shard: 1.0
+      speedup: 0.9
+      vip: 0.7
+      resource: 0.3
+  mid_spender:
+    description: "Moderate spender: balanced weights."
+    weights:
+      shard: 0.9
+      speedup: 0.8
+      vip: 0.8
+      resource: 0.5
+  whale:
+    description: "Heavy spender: less sensitive to raw value, more focused on rare items."
+    weights:
+      shard: 1.0
+      speedup: 0.6
+      vip: 1.0
+      resource: 0.2

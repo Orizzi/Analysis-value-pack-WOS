@@ -23,6 +23,7 @@ Analyse Whiteout Survival paid packs. Ingest mixed raw sources (Excel/CSV with m
   - `cli.py`, `__main__.py` – Typer CLI entrypoints.
   - `logging_utils.py`, `settings.py`, `utils.py` – shared helpers.
 - `config/item_values.yaml` - tweakable base values, categories, and scoring bands.
+- `config/player_profiles.yaml` - player profiles (weights for shards/speedups/vip/etc.) used by profile-aware analysis/planning.
 - `docs/VALUATION_STRATEGY.md`, `docs/GAME_MECHANICS.md`, `docs/IMAGE_ANALYSIS.md` - human context on pricing, game loops, and image handling.
 - `data_raw/` – drop Excel/CSV here (ingestion scans this folder).
 - `data_raw/screenshots/` – optional screenshot drop-zone for OCR ingestion.

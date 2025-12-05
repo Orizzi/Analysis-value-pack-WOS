@@ -26,6 +26,7 @@ Players who want to decide which Whiteout Survival packs are “worth it,” com
 - **I only buy small packs (e.g., 5.99€):** filter by price range (via Pack Explorer search/filters) and then sort by value per dollar.
 - **I care about VIP/long-term strength:** look at VIP-focused ranks/scores; check overall rank as a secondary metric.
 - **I have a fixed budget:** run the budget planner to get a shortlist (it picks top value-per-dollar packs greedily within your budget).
+- **Use player profiles:** try `wos-pack-value analyze --profile f2p` for profile-focused ranks or `wos-pack-value plan --profile f2p --budget ...` to bias recommendations toward your priorities (profiles live in `config/player_profiles.yaml`).
 
 ## Limitations & caveats
 - Values depend on assumptions in `config/item_values.yaml`, tier hints, and `gem_value_per_usd`.

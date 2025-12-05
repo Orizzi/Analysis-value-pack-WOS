@@ -7,10 +7,12 @@ under a given budget using a simple greedy strategy.
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+from .player_profiles import get_profile, PlayerProfile
+from .ranking import compute_profile_score
 from ..settings import DEFAULT_SITE_PACKS, DEFAULT_SITE_ANALYSIS_OVERALL, SITE_DATA_DIR
 from ..utils import load_json, save_json, ensure_dir
 
@@ -24,6 +26,8 @@ class PlannedPack:
     value_per_dollar: float
     rank_overall: Optional[int] = None
     is_reference: bool = False
+    category_values: Dict[str, float] = field(default_factory=dict)
+    profile_score: Optional[float] = None
 
     def to_dict(self) -> Dict:
         return {
@@ -34,6 +38,7 @@ class PlannedPack:
             "value_per_dollar": self.value_per_dollar,
             "rank_overall": self.rank_overall,
             "is_reference": self.is_reference,
+            "profile_score": self.profile_score,
         }
 
 
@@ -82,6 +87,7 @@ def _merge_packs_with_rankings(packs: List[Dict], ranking_overall: Dict) -> List
                 value_per_dollar=value_per_dollar,
                 rank_overall=rank_info.get("rank_overall"),
                 is_reference=bool(p.get("is_reference", False)),
+                category_values=rank_info.get("category_values", {}) or {},
             )
         )
     return merged
@@ -105,6 +111,7 @@ def plan_budget(
     currency: str = "USD",
     max_count: Optional[int] = None,
     include_reference: bool = False,
+    profile: PlayerProfile | None = None,
 ) -> Tuple[List[PlannedPack], PlanSummary]:
     eligible = []
     excluded = 0
@@ -115,8 +122,18 @@ def plan_budget(
         if p.is_reference and not include_reference:
             excluded += 1
             continue
+        if profile and profile.weights:
+            p.profile_score = compute_profile_score(
+                {"price": {"amount": p.price}, "category_values": p.category_values, "value_per_dollar": p.value_per_dollar},
+                profile,
+            )
         eligible.append(p)
-    eligible.sort(key=lambda p: p.value_per_dollar, reverse=True)
+    def sort_key(p: PlannedPack) -> float:
+        if profile and profile.weights:
+            return p.profile_score or 0.0
+        return p.value_per_dollar
+
+    eligible.sort(key=sort_key, reverse=True)
 
     selected: List[PlannedPack] = []
     spent = 0.0

@@ -59,3 +59,29 @@ def test_budget_planner_handles_zero_budget():
     assert selected == []
     assert summary.total_spent == 0.0
     assert summary.total_value == 0.0
+
+
+def test_budget_planner_respects_profile_weights():
+    packs = [
+        PlannedPack(
+            pack_id="a",
+            name="Pack A",
+            price=10.0,
+            total_value=120.0,
+            value_per_dollar=12.0,
+            category_values={"shard": 10, "speedup": 10},
+        ),
+        PlannedPack(
+            pack_id="b",
+            name="Pack B",
+            price=10.0,
+            total_value=90.0,
+            value_per_dollar=9.0,
+            category_values={"shard": 50, "speedup": 1},
+        ),
+    ]
+    from wos_pack_value.analysis.player_profiles import PlayerProfile
+
+    profile = PlayerProfile(name="f2p", description="", weights={"shard": 1.0, "speedup": 0.1})
+    selected, _ = plan_budget(packs, budget=10.0, profile=profile)
+    assert selected[0].pack_id == "b"

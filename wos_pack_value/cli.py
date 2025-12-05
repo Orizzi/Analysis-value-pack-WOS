@@ -98,12 +98,20 @@ def analyze(
     site_dir: Optional[Path] = typer.Option(None, help="Directory containing site_data packs/items"),
     analysis_config: Optional[Path] = typer.Option(None, help="Path to analysis config YAML/JSON"),
     output_dir: Optional[Path] = typer.Option(None, help="Output directory for ranking exports"),
+    profile: Optional[str] = typer.Option(None, help="Player profile name for profile-specific ranking"),
+    profiles_path: Optional[Path] = typer.Option(None, help="Path to player profiles config"),
 ):
     """Run ranking analysis on existing site_data exports."""
     from .analysis.ranking import analyze_from_site_data
 
     configure_logging()
-    analyze_from_site_data(site_dir=site_dir or None, config_path=analysis_config, output_dir=output_dir or site_dir or None)
+    analyze_from_site_data(
+        site_dir=site_dir or None,
+        config_path=analysis_config,
+        output_dir=output_dir or site_dir or None,
+        profile_name=profile,
+        profiles_path=profiles_path,
+    )
     typer.echo("Analysis completed")
 
 
@@ -116,9 +124,11 @@ def plan(
     include_reference: bool = typer.Option(False, help="Include reference/library packs"),
     output_file: Optional[Path] = typer.Option(None, help="Optional JSON output path for the plan"),
     profile: str = typer.Option("default", help="Planner profile (reserved for future use)"),
+    profiles_path: Optional[Path] = typer.Option(None, help="Path to player profiles config"),
 ):
     """Suggest packs to buy under a budget using existing rankings."""
     from .analysis.budget_planner import load_site_data, plan_budget, export_plan_json
+    from .analysis.player_profiles import get_profile
 
     configure_logging()
     if budget <= 0:
@@ -130,15 +140,17 @@ def plan(
         typer.echo(str(exc))
         raise typer.Exit(code=1)
 
+    profile_obj = get_profile(profile, config_path=profiles_path)
     selected, summary = plan_budget(
         packs=packs,
         budget=budget,
         currency=currency,
         max_count=max_count,
         include_reference=include_reference,
+        profile=profile_obj,
     )
 
-    typer.echo(f"Budget planner (profile: {profile}, currency: {currency})")
+    typer.echo(f"Budget planner (profile: {profile_obj.name}, currency: {currency})")
     typer.echo(f"Budget: {budget:.2f}")
     typer.echo(f"Packs considered: {summary.considered}, excluded: {summary.excluded}")
     if not selected:

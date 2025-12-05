@@ -7,10 +7,13 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+from .player_profiles import PlayerProfile, get_profile
 from ..settings import (
     DEFAULT_ANALYSIS_CONFIG_PATH,
     DEFAULT_SITE_ANALYSIS_BY_CATEGORY,
     DEFAULT_SITE_ANALYSIS_OVERALL,
+    DEFAULT_SITE_ANALYSIS_PROFILE,
+    DEFAULT_PLAYER_PROFILES_PATH,
     DEFAULT_SITE_ITEMS,
     DEFAULT_SITE_PACKS,
     SITE_DATA_DIR,
@@ -40,6 +43,25 @@ def __load_yaml(path: Path) -> Dict:
 
     with path.open("r", encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
+
+
+def compute_profile_score(pack_metrics: Dict, profile: PlayerProfile) -> float:
+    """Compute a profile score for a pack based on category values and weights."""
+    if not profile.weights:
+        # fallback to generic value_per_dollar if weights are empty
+        return float(pack_metrics.get("value_per_dollar", 0) or 0.0)
+    price_field = pack_metrics.get("price", 0)
+    if isinstance(price_field, dict):
+        price = float(price_field.get("amount", 0) or 0)
+    else:
+        price = float(price_field or 0)
+    if price <= 0:
+        return 0.0
+    category_values = pack_metrics.get("category_values", {}) or {}
+    weighted = 0.0
+    for cat, weight in profile.weights.items():
+        weighted += float(category_values.get(cat, 0.0)) * float(weight)
+    return weighted / price if price else 0.0
 
 
 def _extract_pack_records(packs: List[Dict], config: Dict) -> List[Dict]:
@@ -99,7 +121,11 @@ def _compute_metrics(pack: Dict, category_weights: Dict, focus_categories: List[
     }
 
 
-def analyze_packs(packs: List[Dict], config: Dict) -> Tuple[List[Dict], Dict[str, List[Dict]]]:
+def analyze_packs(
+    packs: List[Dict],
+    config: Dict,
+    profile: PlayerProfile | None = None,
+) -> Tuple[List[Dict], Dict[str, List[Dict]]]:
     settings = config.get("analysis", {})
     category_weights = settings.get("category_weights", {})
     focus_categories = settings.get("focus_categories", [])
@@ -110,9 +136,21 @@ def analyze_packs(packs: List[Dict], config: Dict) -> Tuple[List[Dict], Dict[str
     for p in records:
         analyses.append(_compute_metrics(p, category_weights, focus_categories, max_vpd))
 
-    analyses.sort(key=lambda a: a["value_per_dollar"], reverse=True)
+    # compute profile scores if provided
+    if profile:
+        for rec in analyses:
+            rec["profile_score"] = compute_profile_score(rec, profile)
+
+    analyses.sort(key=lambda a: a.get("value_per_dollar", 0), reverse=True)
     for idx, rec in enumerate(analyses, start=1):
         rec["rank_overall"] = idx
+
+    if profile:
+        profile_sorted = sorted(analyses, key=lambda a: a.get("profile_score", 0), reverse=True)
+        for idx, rec in enumerate(profile_sorted, start=1):
+            rec["profile_rank"] = idx
+    else:
+        profile_sorted = []
 
     # category rankings based on focus scores
     by_category: Dict[str, List[Dict]] = {}
@@ -132,18 +170,24 @@ def analyze_packs(packs: List[Dict], config: Dict) -> Tuple[List[Dict], Dict[str
             for rec in cat_sorted
         ]
 
-    return analyses, by_category
+    return analyses, by_category, profile_sorted
 
 
 def analyze_from_site_data(
     site_dir: Path = SITE_DATA_DIR,
     config_path: Path | None = None,
     output_dir: Path | None = None,
+    profile_name: str | None = None,
+    profiles_path: Path | None = None,
 ) -> Tuple[Path, Path]:
     config = load_analysis_config(config_path)
+    profile = None
+    profile_path = profiles_path or DEFAULT_PLAYER_PROFILES_PATH
+    if profile_name:
+        profile = get_profile(profile_name, config_path=profile_path)
     packs_data = load_json((site_dir / DEFAULT_SITE_PACKS.name))
     packs = packs_data.get("packs", [])
-    analyses, by_category = analyze_packs(packs, config)
+    analyses, by_category, profile_sorted = analyze_packs(packs, config, profile=profile)
 
     out_dir = output_dir or site_dir
     ensure_dir(out_dir)
@@ -152,4 +196,8 @@ def analyze_from_site_data(
     save_json(overall_path, {"packs": analyses})
     save_json(cat_path, {"by_category": by_category})
     logger.info("Analysis exported to %s and %s", overall_path, cat_path)
+    if profile and profile_sorted:
+        profile_path_out = out_dir / DEFAULT_SITE_ANALYSIS_PROFILE.format(profile=profile.name)
+        save_json(profile_path_out, {"profile": profile.name, "packs": profile_sorted})
+        logger.info("Profile analysis (%s) exported to %s", profile.name, profile_path_out)
     return overall_path, cat_path
