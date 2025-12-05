@@ -34,6 +34,7 @@ def run(
     with_analysis: bool = typer.Option(False, help="Run analysis ranking after pipeline"),
     analysis_config: Optional[Path] = typer.Option(None, help="Path to analysis config YAML/JSON"),
     no_validation: bool = typer.Option(False, help="Skip validation checks/report"),
+    history_root: Optional[Path] = typer.Option(None, help="Write a timestamped snapshot of site_data into this directory"),
 ):
     """Run ingestion + valuation + export."""
     configure_logging(log_file=log_file)
@@ -51,6 +52,7 @@ def run(
         enable_validation=not no_validation,
         ocr_review_dump_path=ocr_review_dump,
         ocr_reviewed_path=ocr_reviewed_path,
+        history_root=history_root,
     )
     if with_analysis and not summary_only:
         from .analysis.ranking import analyze_from_site_data
@@ -290,6 +292,54 @@ def announce(
         typer.echo(f"Announcement written to {output_path}")
     else:
         typer.echo(text)
+
+
+@app.command()
+def history_diff(
+    previous: Optional[Path] = typer.Option(None, help="Path to previous packs.json snapshot"),
+    current: Optional[Path] = typer.Option(None, help="Path to current packs.json (defaults to site_data/packs.json)"),
+    output_file: Optional[Path] = typer.Option(None, help="Where to write diff JSON (default: site_data/changes_since_last_run.json)"),
+    history_root: Optional[Path] = typer.Option(None, help="If previous not given, pick latest snapshot under this root"),
+    summary_only: bool = typer.Option(False, help="Print only summary to stdout"),
+):
+    """Compute differences between two pack snapshots."""
+    from .history.diff import diff_packs
+    from .settings import SITE_DATA_DIR, DEFAULT_SITE_PACKS
+
+    configure_logging()
+    current_path = current or (SITE_DATA_DIR / DEFAULT_SITE_PACKS.name)
+
+    prev_path = previous
+    if not prev_path and history_root and history_root.exists():
+        # pick latest snapshot
+        snapshots = sorted(history_root.glob("*/site_data/packs.json"))
+        if snapshots:
+            prev_path = snapshots[-1]
+    if not prev_path:
+        typer.echo("Previous snapshot path is required (or provide --history-root with existing snapshots).")
+        raise typer.Exit(code=1)
+    if not prev_path.exists():
+        typer.echo(f"Previous snapshot not found: {prev_path}")
+        raise typer.Exit(code=1)
+    if not current_path.exists():
+        typer.echo(f"Current packs.json not found: {current_path}")
+        raise typer.Exit(code=1)
+
+    diff = diff_packs(prev_path, current_path)
+    summary = diff["summary"]
+    typer.echo("Pack changes:")
+    typer.echo(f"  Previous packs: {summary['num_packs_previous']}")
+    typer.echo(f"  Current packs: {summary['num_packs_current']}")
+    typer.echo(f"  New packs: {summary['num_new_packs']}")
+    typer.echo(f"  Removed packs: {summary['num_removed_packs']}")
+    typer.echo(f"  Changed packs: {summary['num_changed_packs']}")
+
+    if not summary_only:
+        out_path = output_file or (SITE_DATA_DIR / "changes_since_last_run.json")
+        from .utils import save_json
+
+        save_json(out_path, diff)
+        typer.echo(f"Detailed diff written to {out_path}")
 
 
 @app.command()

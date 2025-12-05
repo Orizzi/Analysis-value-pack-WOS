@@ -46,6 +46,7 @@ def run_pipeline(
     enable_validation: bool = True,
     ocr_review_dump_path: Path | None = None,
     ocr_reviewed_path: Path | None = None,
+    history_root: Path | None = None,
 ) -> Tuple[List[ValuedPack], Dict]:
     configure_logging(log_file=log_file)
     logger.info("Starting pipeline")
@@ -106,6 +107,12 @@ def run_pipeline(
                     report.summary.num_duplicate_packs,
                     report_path,
                 )
+        # Optional history snapshot
+        if history_root:
+            from .history.snapshot import snapshot_site_data
+
+            snapshot_path = snapshot_site_data(site_dir=site_dir or SITE_DATA_DIR, history_root=history_root)
+            logger.info("Snapshot of site_data written to %s", snapshot_path)
 
     summary = {
         "packs_total": len(packs),
