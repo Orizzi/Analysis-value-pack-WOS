@@ -6,6 +6,7 @@ import logging
 from pathlib import Path
 from typing import Iterable, List, Optional
 
+from ..analysis.summaries import generate_all_pack_summaries
 from ..models.domain import ItemDefinition, Pack, ValuedPack
 from ..settings import DEFAULT_SITE_ITEMS, DEFAULT_SITE_PACKS, DEFAULT_SITE_REFERENCES, SITE_DATA_DIR
 from ..utils import ensure_dir, save_json, timestamp
@@ -37,10 +38,31 @@ def export_site_json(
 ) -> tuple[Path, Path]:
     ensure_dir(site_dir)
     reference_packs = reference_packs or []
+    metrics: List[dict] = []
     packs_payload = []
     for vp in valued_packs:
         pack = vp.pack
         valuation = vp.valuation
+        price = float(pack.price or 0.0)
+        total_value = float(valuation.total_value or 0.0)
+        value_per_dollar = total_value / price if price else 0.0
+        category_values: dict[str, float] = {}
+        for item in pack.items:
+            cat = item.category or "unknown"
+            val = float(valuation.breakdown.get(item.item_id, 0.0))
+            category_values[cat] = category_values.get(cat, 0.0) + val
+        metrics.append(
+            {
+                "id": pack.pack_id,
+                "name": pack.name,
+                "price": price,
+                "currency": pack.currency,
+                "total_value": total_value,
+                "value_per_dollar": value_per_dollar,
+                "category_values": category_values,
+                "is_reference": pack.is_reference,
+            }
+        )
         packs_payload.append(
             {
                 "id": pack.pack_id,
@@ -49,6 +71,7 @@ def export_site_json(
                 "source": {"file": pack.source_file, "sheet": pack.source_sheet},
                 "tags": pack.tags,
                 "is_reference": pack.is_reference,
+                "value_per_dollar": value_per_dollar,
                 "items": [
                     {
                         "id": item.item_id,
@@ -65,8 +88,13 @@ def export_site_json(
                 "score": valuation.score,
                 "label": valuation.label,
                 "color": valuation.color,
+                "category_values": category_values,
             }
         )
+
+    summary_map = generate_all_pack_summaries(metrics)
+    for pack in packs_payload:
+        pack["summary"] = summary_map.get(pack["id"])
 
     items_payload = (items or _derive_items_from_packs(valued_packs))
 

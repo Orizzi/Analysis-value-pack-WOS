@@ -82,6 +82,7 @@ Column aliases of interest: `pack|bundle|pack_name` -> `pack_name`; `item|items|
   - `site_data/packs.json`: pack metadata, items, valuation totals, ratio, score, label, color.
   - `site_data/items.json`: deduped item definitions (from ingestion or derived on the fly).
 - Each file carries `generated_at` timestamps. Shapes are designed for static consumption with a red→green mapping via `label/color/score`.
+- `analysis/summaries.py` builds deterministic short summaries per pack; the summary text is embedded in `packs.json` (field `summary`).
 
 ## Pipeline orchestration
 

@@ -31,7 +31,7 @@ Static, JS-driven view that reads `site_data/` JSON exports and lets players bro
 ## Features
 - Filters: search, exclude reference, top-N toggle, category focus.
 - Sorting: rank overall, value per dollar, price, direction toggle.
-- Detail modal: items, values, category scores, reference flag.
+- Detail modal: brief summary text, items, values, category scores, reference flag.
 - Category dropdown is populated from `pack_ranking_by_category.json`.
 - Comparison: select 2–3 packs via the “Compare” toggle, then click **Compare** to open a side-by-side table (price, total value, value per dollar, rank, category highlights).
 - For player-facing tips on using rankings, see `docs/GAMEPLAY_GUIDE.md`.

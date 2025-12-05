@@ -200,6 +200,7 @@
   function showModal(pack) {
     const modal = document.getElementById("pe-modal");
     const body = document.getElementById("pe-modal-body");
+    const summary = pack.summary ? `<div class="pe-pack-summary">${pack.summary}</div>` : "";
     const itemsHtml = (pack.items || [])
       .map(
         (it) =>
@@ -212,6 +213,7 @@
     body.innerHTML = `
       <h2>${pack.name}</h2>
       <p class="pe-muted">Price: ${pack.price?.amount ?? pack.price ?? 0} ${pack.price?.currency ?? ""}</p>
+      ${summary}
       <p>Value per dollar: ${(pack.value_per_dollar ?? 0).toFixed(2)} | Rank overall: ${pack.rank_overall ?? "?"}</p>
       <p>Reference: ${pack.is_reference ? "Yes" : "No"}</p>
       <h3>Items</h3>
