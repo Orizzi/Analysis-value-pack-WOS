@@ -1,0 +1,7 @@
+reference_handling:
+  mode: tag  # options: tag, exclude, separate
+  sheet_name_patterns:
+    - library
+    - ref
+    - lookup
+    - rate

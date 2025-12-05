@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 from .export.json_export import export_site_json
+from .ingestion.config import load_ingestion_config
 from .ingestion.pipeline import ingest_all
 from .logging_utils import configure_logging
 from .models.domain import ValuedPack
@@ -38,9 +39,12 @@ def run_pipeline(
     use_ocr: bool = False,
     screenshots_dir: Path | None = None,
     ocr_lang: str = "eng",
-) -> Tuple[List[ValuedPack], Dict]:
+    ) -> Tuple[List[ValuedPack], Dict]:
     configure_logging(log_file=log_file)
     logger.info("Starting pipeline")
+    ingestion_config = load_ingestion_config()
+    ref_handling = ingestion_config.get("reference_handling", {})
+    ref_mode = ref_handling.get("mode", "tag")
     packs, item_defs = ingest_all(
         raw_dir=raw_dir or DATA_RAW_DIR,
         processed_dir=processed_dir or DATA_PROCESSED_DIR,
@@ -48,10 +52,14 @@ def run_pipeline(
         use_ocr=use_ocr,
         screenshots_dir=screenshots_dir or SCREENSHOTS_DIR,
         ocr_lang=ocr_lang,
+        ingestion_config_path=None,
     )
+    reference_packs = [p for p in packs if p.is_reference]
+    normal_packs = [p for p in packs if not p.is_reference]
+    valuation_input = normal_packs if ref_mode in {"exclude", "separate"} else packs
     valuations_path = (processed_dir or DATA_PROCESSED_DIR) / DEFAULT_PROCESSED_VALUATIONS.name
     valued, config = valuate(
-        packs=packs,
+        packs=valuation_input,
         config_path=config_path,
         valuations_path=valuations_path,
         processed_path=(processed_dir or DATA_PROCESSED_DIR) / DEFAULT_PROCESSED_PACKS.name,
@@ -60,6 +68,8 @@ def run_pipeline(
         valued_packs=valued,
         items=item_defs,
         site_dir=site_dir or SITE_DATA_DIR,
+        reference_mode=ref_mode,
+        reference_packs=reference_packs,
     )
     logger.info("Pipeline finished")
     return valued, config

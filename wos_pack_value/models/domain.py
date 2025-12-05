@@ -35,6 +35,7 @@ class Pack(BaseModel):
     currency: str = "USD"
     source_file: str
     source_sheet: Optional[str] = None
+    is_reference: bool = False
     tags: List[str] = Field(default_factory=list)
     items: List[PackItem] = Field(default_factory=list)
     notes: Optional[str] = None
@@ -55,4 +56,3 @@ class PackValuation(BaseModel):
 class ValuedPack(BaseModel):
     pack: Pack
     valuation: PackValuation
-

@@ -11,6 +11,7 @@ Analyse Whiteout Survival paid packs. Ingest mixed raw sources (Excel/CSV with m
 - `wos_pack_value/`
 - `ingestion/` – file scanning and tabular parsers (`tabular.py`, `pipeline.py`).
 - `ingestion/ocr.py` – optional OCR ingestion of screenshots (pytesseract).
+- `ingestion/config.py` – ingestion config loader (reference handling).
   - `valuation/` – config loader and scoring engine (`config.py`, `engine.py`, `pipeline.py`).
   - `export/` – site-facing JSON writer (`json_export.py`).
   - `pipeline.py` – top-level run orchestrator.
@@ -18,8 +19,9 @@ Analyse Whiteout Survival paid packs. Ingest mixed raw sources (Excel/CSV with m
   - `logging_utils.py`, `settings.py`, `utils.py` – shared helpers.
 - `config/item_values.yaml` - tweakable base values, categories, and scoring bands.
 - `docs/VALUATION_STRATEGY.md`, `docs/GAME_MECHANICS.md`, `docs/IMAGE_ANALYSIS.md` - human context on pricing, game loops, and image handling.
-- `data_raw/` - drop Excel/CSV here (ingestion scans this folder).
-- `data_processed/` - normalized packs/items + valuations JSON.
+- `data_raw/` – drop Excel/CSV here (ingestion scans this folder).
+- `data_raw/screenshots/` – optional screenshot drop-zone for OCR ingestion.
+- `data_processed/` – normalized packs/items + valuations JSON.
 - `site_data/` – static-site JSON exports.
 - `images_raw/`, `images_processed/` – extracted and cleaned icons.
 - `data_raw/screenshots/` – optional screenshot drop-zone for OCR ingestion.
@@ -55,8 +57,10 @@ Column aliases of interest: `pack|bundle|pack_name` -> `pack_name`; `item|items|
 
 - `load_valuation_config()` loads YAML (deep-merged with defaults) including:
   - `items`, `categories`, `pack_price_hints`, `price_inference` (gem_value_per_usd, tier snapping), `price_defaults`, `valuation` bands/scale.
+- `load_ingestion_config()` loads `config/ingestion.yaml` (reference handling): `mode` (`tag`/`exclude`/`separate`) and `sheet_name_patterns` used to detect library/reference tables. Packs parsed from sheets matching patterns are tagged (`is_reference=True`), optionally excluded from valuation/exports or written to `site_data/reference_packs.json` when `mode=separate`.
 - `value_packs()` resolution order: per-item override → ingested `base_value` → category default (+ multiplier). Price inference uses pack price → `pack_price_hints` (substring) → gem_total/`gem_value_per_usd` → fallback, then snaps to the nearest configured tier when enabled. Price source (with snap info) is recorded in `pack.meta["price_source"]`.
 - OCR path: `ingestion/ocr.py` can convert screenshot text into packs. CLI flag `--use-ocr-screenshots` (with optional `--screenshots-dir`, `--ocr-lang`) enables this path. Without OCR libs installed, enablement will raise a clear error. Parsed items/price/pack names are fed into the same valuation/export pipeline.
+- Reference handling: sheets/blocks with names matching patterns (default: library/ref/lookup/rate) are tagged as reference. Depending on `reference_handling.mode`, they are excluded, tagged in main exports, or written separately.
 - `valuate()` wrapper loads processed packs when needed and optionally persists `valuations.json`.
 
 ## Export (`wos_pack_value.export`)

@@ -141,7 +141,20 @@ def _header_score(row: Sequence[Optional[object]]) -> int:
     return score
 
 
-def _sheet_tables(ws) -> List[Tuple[pd.DataFrame, List[int], Optional[str]]]:
+def _is_reference(sheet_name: str, pack_hint: Optional[str], config: Dict | None) -> bool:
+    patterns = []
+    if config:
+        patterns = [p.lower() for p in config.get("sheet_name_patterns", []) if isinstance(p, str)]
+    for value in [sheet_name, pack_hint]:
+        if not value:
+            continue
+        low = value.lower()
+        if any(pat in low for pat in patterns):
+            return True
+    return False
+
+
+def _sheet_tables(ws, sheet_name: str, reference_config: Dict | None) -> List[Tuple[pd.DataFrame, List[int], Optional[str], bool]]:
     """Split a worksheet into multiple logical tables based on header detection."""
     merged_values = _expand_merged_cells(ws)
     rows = []
@@ -153,7 +166,7 @@ def _sheet_tables(ws) -> List[Tuple[pd.DataFrame, List[int], Optional[str]]]:
                 val = merged_values[(cell.row, cell.column)]
             values.append(val)
         rows.append(values)
-    tables: List[Tuple[pd.DataFrame, List[int], Optional[str]]] = []
+    tables: List[Tuple[pd.DataFrame, List[int], Optional[str], bool]] = []
     pack_hint: Optional[str] = None
     i = 0
     while i < len(rows):
@@ -193,7 +206,8 @@ def _sheet_tables(ws) -> List[Tuple[pd.DataFrame, List[int], Optional[str]]]:
             if data:
                 header_vals = [str(h) if h is not None else f"col_{idx+1}" for idx, h in enumerate(header)]
                 df = pd.DataFrame(data, columns=_normalize_columns(header_vals))
-                tables.append((df, row_numbers, pack_hint))
+                is_ref = _is_reference(sheet_name, pack_hint, reference_config)
+                tables.append((df, row_numbers, pack_hint, is_ref))
             pack_hint = None
             continue
         i += 1
@@ -241,6 +255,7 @@ def _pack_from_rows(
     sheet_name: str | None,
     image_map: Dict[int, Path],
     pack_name_hint: Optional[str] = None,
+    is_reference: bool = False,
 ) -> List[Pack]:
     packs: Dict[str, Pack] = {}
     for idx, (_, row) in enumerate(df.iterrows()):
@@ -259,6 +274,7 @@ def _pack_from_rows(
                 currency=currency,
                 source_file=str(source_file),
                 source_sheet=sheet_name,
+                is_reference=is_reference,
                 tags=tags,
                 items=[],
             )
@@ -321,7 +337,12 @@ def parse_csv(path: Path, default_currency: str = "USD") -> List[Pack]:
     return _pack_from_rows(df, row_numbers, path, None, image_map={})
 
 
-def parse_excel(path: Path, images_dir: Path, default_currency: str = "USD") -> List[Pack]:
+def parse_excel(
+    path: Path,
+    images_dir: Path,
+    default_currency: str = "USD",
+    reference_config: Dict | None = None,
+) -> List[Pack]:
     logger.info("Ingesting Excel %s", path.name)
     workbook = load_workbook(path, data_only=True)
     all_packs: List[Pack] = []
@@ -331,22 +352,29 @@ def parse_excel(path: Path, images_dir: Path, default_currency: str = "USD") -> 
         ws = workbook[sheet_name]
         image_pairs = _extract_images(ws, images_dir, f"{path.stem}_{slugify(sheet_name)}")
         image_map = {row: file for row, file in image_pairs if row is not None}
-        tables = _sheet_tables(ws)
-        for idx, (df, row_numbers, pack_hint) in enumerate(tables, start=1):
+        tables = _sheet_tables(ws, sheet_name, reference_config)
+        for idx, (df, row_numbers, pack_hint, is_ref) in enumerate(tables, start=1):
             if df.empty:
                 continue
             default_pack_name = pack_hint or f"{path.stem}-{slugify(sheet_name)}-table-{idx}"
             df = _normalize_dataframe(df, default_pack_name=default_pack_name, default_currency=default_currency)
-            sheet_packs = _pack_from_rows(df, row_numbers, path, sheet_name, image_map, pack_name_hint=pack_hint)
+            sheet_packs = _pack_from_rows(
+                df, row_numbers, path, sheet_name, image_map, pack_name_hint=pack_hint, is_reference=is_ref
+            )
             all_packs.extend(sheet_packs)
     return all_packs
 
 
-def parse_file(path: Path, images_dir: Path, default_currency: str = "USD") -> List[Pack]:
+def parse_file(
+    path: Path,
+    images_dir: Path,
+    default_currency: str = "USD",
+    reference_config: Dict | None = None,
+) -> List[Pack]:
     suffix = path.suffix.lower()
     if suffix in {".csv", ".tsv"}:
         return parse_csv(path, default_currency=default_currency)
     if suffix in {".xlsx", ".xlsm"}:
-        return parse_excel(path, images_dir=images_dir, default_currency=default_currency)
+        return parse_excel(path, images_dir=images_dir, default_currency=default_currency, reference_config=reference_config)
     logger.warning("Skipping unsupported file: %s", path.name)
     return []

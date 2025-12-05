@@ -11,6 +11,7 @@
 - `price_defaults.fallback_price`: used only if no hints or gem totals exist.
 - `price_inference.tiers`: per-currency tier lists (e.g., USD: 0.99/4.99/9.99…, EUR: 5.99/10.99/21.99…) used to snap inferred prices to realistic store values. Controlled by `snap_to_tiers` and `snap_max_delta`.
 - Price source (including snap info) is recorded in `pack.meta["price_source"]`.
+- Reference/library sheets: detected via `config/ingestion.yaml` (`reference_handling.sheet_name_patterns`). Depending on `reference_handling.mode`, they are excluded from valuation/exports, tagged (`is_reference=True`), or written to a separate reference JSON. These are not intended to represent purchasable packs.
 
 ## Item value resolution
 1. **Per-item override** (`items` in config) – includes optional category override.

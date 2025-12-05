@@ -6,10 +6,11 @@
 - `price` (float)
 - `currency` (str, default USD)
 - `source_file` (str), `source_sheet` (str|None)
+- `is_reference` (bool) - reference/library blocks rather than purchasable packs.
 - `tags` (list[str])
 - `items` (list[`PackItem`])
 - `notes` (str|None)
-- `meta` (dict) – free-form, e.g., event name.
+- `meta` (dict) - free-form, e.g., event name.
 
 ## PackItem
 - `item_id` (str) – slugified from name.

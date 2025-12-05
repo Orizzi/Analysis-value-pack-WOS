@@ -16,6 +16,7 @@ from ..settings import (
     SCREENSHOTS_DIR,
 )
 from ..utils import ensure_dir, save_json, timestamp
+from .config import load_ingestion_config
 from .ocr import ingest_screenshots
 from .tabular import parse_file
 
@@ -46,16 +47,26 @@ def ingest_all(
     use_ocr: bool = False,
     screenshots_dir: Path | None = None,
     ocr_lang: str = "eng",
+    ingestion_config_path: Path | None = None,
 ) -> Tuple[List[Pack], List[ItemDefinition]]:
     ensure_dir(raw_dir)
     ensure_dir(processed_dir)
     ensure_dir(images_dir)
+    ingestion_config = load_ingestion_config(ingestion_config_path)
+    ref_config = ingestion_config.get("reference_handling", {})
 
     packs: List[Pack] = []
     for path in sorted(raw_dir.iterdir()):
         if not path.is_file():
             continue
-        packs.extend(parse_file(path, images_dir=images_dir, default_currency=default_currency))
+        packs.extend(
+            parse_file(
+                path,
+                images_dir=images_dir,
+                default_currency=default_currency,
+                reference_config=ref_config,
+            )
+        )
 
     if use_ocr:
         packs.extend(
