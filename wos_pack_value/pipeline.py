@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 from .export.json_export import export_site_json
+from .analysis.game_profiles import get_game_profile, GameProfile
 from .ingestion.config import load_ingestion_config
 from .ingestion.pipeline import ingest_all
 from .logging_utils import configure_logging
@@ -47,12 +48,14 @@ def run_pipeline(
     ocr_review_dump_path: Path | None = None,
     ocr_reviewed_path: Path | None = None,
     history_root: Path | None = None,
+    game_key: str | None = None,
 ) -> Tuple[List[ValuedPack], Dict]:
     configure_logging(log_file=log_file)
     logger.info("Starting pipeline")
     ingestion_config = load_ingestion_config(ingestion_config_path)
     ref_handling = ingestion_config.get("reference_handling", {})
     ref_mode = reference_mode_override or ref_handling.get("mode", "tag")
+    game_profile: GameProfile = get_game_profile(game_key=game_key)
     packs, item_defs = ingest_all(
         raw_dir=raw_dir or DATA_RAW_DIR,
         processed_dir=processed_dir or DATA_PROCESSED_DIR,
@@ -73,6 +76,7 @@ def run_pipeline(
     valued, config = valuate(
         packs=valuation_input,
         config_path=config_path,
+        game=game_profile,
         valuations_path=valuations_path,
         processed_path=(processed_dir or DATA_PROCESSED_DIR) / DEFAULT_PROCESSED_PACKS.name,
     )
@@ -83,6 +87,7 @@ def run_pipeline(
             site_dir=site_dir or SITE_DATA_DIR,
             reference_mode=ref_mode,
             reference_packs=reference_packs,
+            game=game_profile,
         )
         if enable_validation:
             validation_cfg = load_validation_config()

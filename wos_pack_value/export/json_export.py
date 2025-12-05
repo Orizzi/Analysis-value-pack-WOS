@@ -8,6 +8,7 @@ from typing import Iterable, List, Optional
 
 from ..analysis.summaries import generate_all_pack_summaries
 from ..analysis.item_categories import load_item_category_config, aggregate_category_values
+from ..analysis.game_profiles import GameProfile
 from ..models.domain import ItemDefinition, Pack, ValuedPack
 from ..settings import DEFAULT_SITE_ITEMS, DEFAULT_SITE_PACKS, DEFAULT_SITE_REFERENCES, SITE_DATA_DIR
 from ..utils import ensure_dir, save_json, timestamp
@@ -36,11 +37,14 @@ def export_site_json(
     site_dir: Path = SITE_DATA_DIR,
     reference_mode: str = "tag",
     reference_packs: Optional[List[Pack]] = None,
+    game: GameProfile | None = None,
 ) -> tuple[Path, Path]:
     ensure_dir(site_dir)
     reference_packs = reference_packs or []
     metrics: List[dict] = []
-    cat_config = load_item_category_config()
+    cat_config = load_item_category_config(game=game)
+    game_key = game.key if game else "whiteout_survival"
+    game_label = game.label if game else "Whiteout Survival"
     packs_payload = []
     for vp in valued_packs:
         pack = vp.pack
@@ -63,6 +67,8 @@ def export_site_json(
         )
         packs_payload.append(
             {
+                "game": game_key,
+                "game_label": game_label,
                 "id": pack.pack_id,
                 "name": pack.name,
                 "price": {"amount": pack.price, "currency": pack.currency},
@@ -99,7 +105,13 @@ def export_site_json(
     packs_path = site_dir / DEFAULT_SITE_PACKS.name
     items_path = site_dir / DEFAULT_SITE_ITEMS.name
     save_json(packs_path, {"generated_at": timestamp(), "packs": packs_payload})
-    save_json(items_path, {"generated_at": timestamp(), "items": [item.dict() for item in items_payload]})
+    save_json(
+        items_path,
+        {
+            "generated_at": timestamp(),
+            "items": [{**item.dict(), "game": game_key, "game_label": game_label} for item in items_payload],
+        },
+    )
     reference_path = None
     if reference_mode == "separate" and reference_packs:
         ref_payload = [

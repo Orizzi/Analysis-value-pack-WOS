@@ -28,6 +28,7 @@ Analyse Whiteout Survival paid packs. Ingest mixed raw sources (Excel/CSV with m
 - `history/snapshot.py` and `history/diff.py` – optional history snapshots (`--history-root` on `run`) and diffing packs between snapshots; `wos-pack-value history-diff` reports new/removed/changed packs.
 - `analysis/item_categories.py` + `config/item_categories.yaml` – central item categorization used to build `category_values` for packs; edit YAML to adjust how items map to shards/speedups/vip/resources/crystals/etc.
 - `automation/auto_update.py` – helper to run the pipeline and auto-commit changed exports via `wos-pack-value auto-update` (supports history snapshots, dry-run, extra run args).
+- Game profiles: `config/game_profiles.yaml` defines available games (default `whiteout_survival`). Most CLI commands accept `--game` to load per-game configs from `config/games/<game>/...`; unknown games raise a clear error.
 - `config/item_values.yaml` - tweakable base values, categories, and scoring bands.
 - `config/player_profiles.yaml` - player profiles (weights for shards/speedups/vip/etc.) used by profile-aware analysis/planning.
 - `docs/VALUATION_STRATEGY.md`, `docs/GAME_MECHANICS.md`, `docs/IMAGE_ANALYSIS.md` - human context on pricing, game loops, and image handling.

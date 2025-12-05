@@ -12,6 +12,7 @@
 - `notes` (str|None)
 - `meta` (dict) - free-form, e.g., event name.
 - `category_values` (dict[str, float]) - aggregated value per normalized category (shards, speedups, vip, resources, crystals, etc.) using `config/item_categories.yaml`. Present in exports.
+- `game` (str) - game key (e.g., `whiteout_survival`), and `game_label` on exports for readability.
 
 ## PackItem
 - `item_id` (str) – slugified from name.
@@ -31,6 +32,7 @@
 - `base_value` (float|None)
 - `description` (str|None)
 - `meta` (dict)
+- `game` (str) - game key on exports.
 
 ## PackValuation
 - `pack_id` (str)

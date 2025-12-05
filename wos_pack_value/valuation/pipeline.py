@@ -6,6 +6,7 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+from ..analysis.game_profiles import GameProfile
 from ..models.domain import Pack, ValuedPack
 from ..settings import DEFAULT_PROCESSED_PACKS, DEFAULT_PROCESSED_VALUATIONS
 from ..utils import load_json, save_json, timestamp
@@ -23,11 +24,12 @@ def load_packs_from_processed(path: Path = DEFAULT_PROCESSED_PACKS) -> List[Pack
 def valuate(
     packs: List[Pack] | None = None,
     config_path: Path | None = None,
+    game: GameProfile | None = None,
     persist: bool = True,
     processed_path: Path = DEFAULT_PROCESSED_PACKS,
     valuations_path: Path = DEFAULT_PROCESSED_VALUATIONS,
 ) -> Tuple[List[ValuedPack], Dict]:
-    config = load_valuation_config(config_path or None)
+    config = load_valuation_config(config_path or None, game=game)
     if packs is None:
         packs = load_packs_from_processed(processed_path)
     valued = value_packs(packs, config=config)
@@ -43,4 +45,3 @@ def valuate(
             },
         )
     return valued, config
-

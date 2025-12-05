@@ -20,6 +20,7 @@ def _run_pipeline_cmd(
     site_dir: Path,
     history_root: Optional[Path],
     extra_run_args: Sequence[str] | None = None,
+    game_key: str | None = None,
 ) -> int:
     cmd = [
         "python",
@@ -34,6 +35,8 @@ def _run_pipeline_cmd(
     ]
     if history_root:
         cmd += ["--history-root", str(history_root)]
+    if game_key:
+        cmd += ["--game", game_key]
     if extra_run_args:
         cmd += list(extra_run_args)
     return _run_cmd(cmd)
@@ -77,9 +80,12 @@ def auto_update_and_commit(
     dry_run: bool = False,
     commit_message: Optional[str] = None,
     paths_to_watch: Optional[Sequence[Path]] = None,
+    game_key: str | None = None,
 ) -> int:
     """Run pipeline, detect export changes, and create a git commit if needed."""
-    run_code = _run_pipeline_cmd(raw_dir=raw_dir, site_dir=site_dir, history_root=history_root, extra_run_args=extra_run_args)
+    run_code = _run_pipeline_cmd(
+        raw_dir=raw_dir, site_dir=site_dir, history_root=history_root, extra_run_args=extra_run_args, game_key=game_key
+    )
     if run_code != 0:
         print("Pipeline run failed; aborting auto-update.")
         return run_code

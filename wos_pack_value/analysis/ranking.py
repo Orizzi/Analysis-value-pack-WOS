@@ -183,12 +183,13 @@ def analyze_from_site_data(
     output_dir: Path | None = None,
     profile_name: str | None = None,
     profiles_path: Path | None = None,
+    game: GameProfile | None = None,
 ) -> Tuple[Path, Path]:
-    config = load_analysis_config(config_path)
+    config = load_analysis_config(config_path, game=game)
     profile = None
     profile_path = profiles_path or DEFAULT_PLAYER_PROFILES_PATH
     if profile_name:
-        profile = get_profile(profile_name, config_path=profile_path)
+        profile = get_profile(profile_name, config_path=profile_path, game=game)
     packs_data = load_json((site_dir / DEFAULT_SITE_PACKS.name))
     packs = packs_data.get("packs", [])
     analyses, by_category, profile_sorted = analyze_packs(packs, config, profile=profile)

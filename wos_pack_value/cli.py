@@ -9,12 +9,21 @@ from typing import Optional
 import typer
 
 from .export.json_export import export_site_json
+from .analysis.game_profiles import get_game_profile
 from .ingestion.pipeline import ingest_all
 from .logging_utils import configure_logging
 from .pipeline import run_pipeline
 from .valuation.pipeline import valuate
 
 app = typer.Typer(add_completion=False, help="Whiteout Survival pack value toolkit")
+
+
+def _resolve_game_or_exit(game: Optional[str]):
+    try:
+        return get_game_profile(game_key=game)
+    except ValueError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(code=1)
 
 
 @app.command()
@@ -35,9 +44,11 @@ def run(
     analysis_config: Optional[Path] = typer.Option(None, help="Path to analysis config YAML/JSON"),
     no_validation: bool = typer.Option(False, help="Skip validation checks/report"),
     history_root: Optional[Path] = typer.Option(None, help="Write a timestamped snapshot of site_data into this directory"),
+    game: Optional[str] = typer.Option(None, help="Game key to use (default from config/game_profiles.yaml)"),
 ):
     """Run ingestion + valuation + export."""
     configure_logging(log_file=log_file)
+    game_profile = _resolve_game_or_exit(game)
     valued, _ = run_pipeline(
         config_path=config,
         raw_dir=raw_dir,
@@ -53,11 +64,12 @@ def run(
         ocr_review_dump_path=ocr_review_dump,
         ocr_reviewed_path=ocr_reviewed_path,
         history_root=history_root,
+        game_key=game_profile.key,
     )
     if with_analysis and not summary_only:
         from .analysis.ranking import analyze_from_site_data
 
-        analyze_from_site_data(site_dir or None, config_path=analysis_config, output_dir=site_dir or None)
+        analyze_from_site_data(site_dir or None, config_path=analysis_config, output_dir=site_dir or None, game=game_profile)
 
 
 @app.command()
@@ -108,17 +120,20 @@ def analyze(
     output_dir: Optional[Path] = typer.Option(None, help="Output directory for ranking exports"),
     profile: Optional[str] = typer.Option(None, help="Player profile name for profile-specific ranking"),
     profiles_path: Optional[Path] = typer.Option(None, help="Path to player profiles config"),
+    game: Optional[str] = typer.Option(None, help="Game key to use (default from config/game_profiles.yaml)"),
 ):
     """Run ranking analysis on existing site_data exports."""
     from .analysis.ranking import analyze_from_site_data
 
     configure_logging()
+    game_profile = _resolve_game_or_exit(game)
     analyze_from_site_data(
         site_dir=site_dir or None,
         config_path=analysis_config,
         output_dir=output_dir or site_dir or None,
         profile_name=profile,
         profiles_path=profiles_path,
+        game=game_profile,
     )
     typer.echo("Analysis completed")
 
@@ -133,12 +148,14 @@ def plan(
     output_file: Optional[Path] = typer.Option(None, help="Optional JSON output path for the plan"),
     profile: str = typer.Option("default", help="Planner profile (reserved for future use)"),
     profiles_path: Optional[Path] = typer.Option(None, help="Path to player profiles config"),
+    game: Optional[str] = typer.Option(None, help="Game key to use (default from config/game_profiles.yaml)"),
 ):
     """Suggest packs to buy under a budget using existing rankings."""
     from .analysis.budget_planner import load_site_data, plan_budget, export_plan_json
     from .analysis.player_profiles import get_profile
 
     configure_logging()
+    game_profile = _resolve_game_or_exit(game)
     if budget <= 0:
         typer.echo("Budget must be greater than 0.")
         raise typer.Exit(code=1)
@@ -148,7 +165,7 @@ def plan(
         typer.echo(str(exc))
         raise typer.Exit(code=1)
 
-    profile_obj = get_profile(profile, config_path=profiles_path)
+    profile_obj = get_profile(profile, config_path=profiles_path, game=game_profile)
     selected, summary = plan_budget(
         packs=packs,
         budget=budget,
@@ -196,17 +213,19 @@ def goal(
     include_reference: bool = typer.Option(False, help="Include reference/library packs"),
     output_file: Optional[Path] = typer.Option(None, help="Optional JSON output path for the goal plan"),
     profiles_path: Optional[Path] = typer.Option(None, help="Path to player profiles config"),
+    game: Optional[str] = typer.Option(None, help="Game key to use (default from config/game_profiles.yaml)"),
 ):
     """Plan purchases to reach a target item amount within a budget."""
     from .analysis.goal_planner import plan_for_goal, export_goal_plan_json
     from .analysis.player_profiles import get_profile
 
     configure_logging()
+    game_profile = _resolve_game_or_exit(game)
     if not target or amount <= 0:
         typer.echo("Target and amount are required (amount must be > 0).")
         raise typer.Exit(code=1)
     site_dir_path = site_dir or Path("site_data")
-    profile_obj = get_profile(profile, config_path=profiles_path)
+    profile_obj = get_profile(profile, config_path=profiles_path, game=game_profile)
     try:
         result = plan_for_goal(
             site_dir=site_dir_path,
@@ -265,11 +284,13 @@ def announce(
     include_reference: bool = typer.Option(False, help="Include reference/library packs"),
     output_file: Optional[Path] = typer.Option(None, help="Optional output Markdown file"),
     title: Optional[str] = typer.Option(None, help="Optional heading override"),
+    game: Optional[str] = typer.Option(None, help="Game key to use (default from config/game_profiles.yaml)"),
 ):
     """Generate a Discord/Markdown-friendly announcement of top packs."""
     from .analysis.announcements import load_and_generate_announcement
 
     configure_logging()
+    _ = _resolve_game_or_exit(game)  # resolved for validation/future use
     site_dir_path = site_dir or Path("site_data")
     try:
         text = load_and_generate_announcement(
@@ -350,11 +371,13 @@ def auto_update(
     dry_run: bool = typer.Option(False, help="Show what would happen without git add/commit"),
     commit_message: Optional[str] = typer.Option(None, help="Override commit message"),
     extra_run_args: Optional[list[str]] = typer.Option(None, help="Extra args forwarded to `run` (e.g., --use-ocr-screenshots)"),
+    game: Optional[str] = typer.Option(None, help="Game key to use (default from config/game_profiles.yaml)"),
 ):
     """Run pipeline + analysis, then git-commit exports if changed."""
     from .automation.auto_update import auto_update_and_commit
 
     configure_logging()
+    game_profile = _resolve_game_or_exit(game)
     code = auto_update_and_commit(
         raw_dir=raw_dir,
         site_dir=site_dir,
@@ -362,6 +385,7 @@ def auto_update(
         dry_run=dry_run,
         commit_message=commit_message,
         extra_run_args=extra_run_args or [],
+        game_key=game_profile.key,
     )
     raise typer.Exit(code)
 

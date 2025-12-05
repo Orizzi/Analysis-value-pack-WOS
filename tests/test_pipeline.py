@@ -4,6 +4,7 @@ import shutil
 from wos_pack_value.ingestion.pipeline import ingest_all
 from wos_pack_value.ingestion.tabular import parse_excel
 from wos_pack_value.valuation.config import load_valuation_config
+from wos_pack_value.utils import load_json
 from wos_pack_value.valuation.engine import value_packs
 from wos_pack_value.export.json_export import export_site_json
 from wos_pack_value.models.domain import Pack, PackItem
@@ -83,6 +84,10 @@ def test_export_writes_json(tmp_path: Path):
     packs_path, items_path = export_site_json(valued, items=items, site_dir=tmp_path / "site")
     assert packs_path.exists()
     assert items_path.exists()
+    data = load_json(packs_path)
+    assert data["packs"][0].get("game") is not None
+    items_data = load_json(items_path)
+    assert items_data["items"][0].get("game") is not None
 
 
 def test_price_inference_from_hints():

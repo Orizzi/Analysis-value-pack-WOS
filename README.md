@@ -13,6 +13,7 @@ One-stop toolkit to ingest, value, rank, and explore Whiteout Survival packs (Ex
 - **Discord-ready announcements**: Generate Markdown summaries of top packs for a profile with `wos-pack-value announce`.
 - **History & diffs**: Optional snapshots of `site_data` (`--history-root`) and a diff command (`wos-pack-value history-diff`) to list new/removed/changed packs between runs.
 - **Auto-update helper**: `wos-pack-value auto-update` runs the pipeline (with analysis/history) and commits export changes with a standard message (supports dry-run).
+- **Game profiles**: Config is game-aware; commands accept `--game` to use per-game overrides (default: Whiteout Survival).
 - **Docs & tests**: Human and AI guides, sample data in `examples/`, and pytest coverage.
 
 ## Quickstart
