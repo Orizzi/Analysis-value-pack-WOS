@@ -1,0 +1,132 @@
+:root {
+  --or-bg: #0b1222;
+  --or-card: #141c2f;
+  --or-border: #243045;
+  --or-text: #e5e7eb;
+  --or-muted: #94a3b8;
+  --or-accent: #22c55e;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background: var(--or-bg);
+  color: var(--or-text);
+}
+
+.or-root {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+.or-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.or-muted {
+  color: var(--or-muted);
+}
+
+.or-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.or-btn {
+  cursor: pointer;
+  border: 1px solid var(--or-border);
+  background: transparent;
+  color: var(--or-text);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.or-btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.or-list {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px;
+}
+
+.or-card {
+  background: var(--or-card);
+  border: 1px solid var(--or-border);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.or-card header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.or-input {
+  width: 100%;
+  background: var(--or-bg);
+  border: 1px solid var(--or-border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  color: var(--or-text);
+}
+
+.or-row {
+  display: grid;
+  grid-template-columns: 1fr 100px;
+  gap: 8px;
+  align-items: center;
+}
+
+.or-badge {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--or-accent);
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 12px;
+}
+
+.or-alert {
+  background: #b91c1c;
+  color: #fee2e2;
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+
+.or-item-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.or-item-table th,
+.or-item-table td {
+  border-bottom: 1px solid var(--or-border);
+  padding: 6px 4px;
+  text-align: left;
+}
+
+.or-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.or-discard {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--or-muted);
+}

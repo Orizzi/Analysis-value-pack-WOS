@@ -44,6 +44,8 @@ def run_pipeline(
     reference_mode_override: str | None = None,
     summary_only: bool = False,
     enable_validation: bool = True,
+    ocr_review_dump_path: Path | None = None,
+    ocr_reviewed_path: Path | None = None,
 ) -> Tuple[List[ValuedPack], Dict]:
     configure_logging(log_file=log_file)
     logger.info("Starting pipeline")
@@ -60,6 +62,8 @@ def run_pipeline(
         ingestion_config_path=ingestion_config_path,
         ingestion_config_data=ingestion_config,
         persist=not summary_only,
+        ocr_review_dump_path=ocr_review_dump_path,
+        ocr_reviewed_path=ocr_reviewed_path,
     )
     reference_packs = [p for p in packs if p.is_reference]
     normal_packs = [p for p in packs if not p.is_reference]

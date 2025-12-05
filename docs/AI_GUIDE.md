@@ -18,11 +18,12 @@ Analyse Whiteout Survival paid packs. Ingest mixed raw sources (Excel/CSV with m
 - For navigation/rules as an AI agent, read `docs/AGENT_OVERVIEW.md`.
 - Budget planner: `wos-pack-value plan` reads existing exports and suggests packs under a budget (greedy by value_per_dollar). See `docs/GAMEPLAY_GUIDE.md` for the player view.
 - Validation: runs after pipeline to flag missing prices, extreme VPD, unknown items, duplicates. Configurable via `config/validation.yaml`; report at `site_data/validation_report.json`.
-  - `valuation/` – config loader and scoring engine (`config.py`, `engine.py`, `pipeline.py`).
-  - `export/` – site-facing JSON writer (`json_export.py`).
-  - `pipeline.py` – top-level run orchestrator.
-  - `cli.py`, `__main__.py` – Typer CLI entrypoints.
-  - `logging_utils.py`, `settings.py`, `utils.py` – shared helpers.
+- `valuation/` – config loader and scoring engine (`config.py`, `engine.py`, `pipeline.py`).
+- `export/` – site-facing JSON writer (`json_export.py`).
+- `pipeline.py` – top-level run orchestrator.
+- `cli.py`, `__main__.py` – Typer CLI entrypoints.
+- `logging_utils.py`, `settings.py`, `utils.py` – shared helpers.
+- `ingestion/ocr_review.py` – loads reviewed OCR packs (`data_review/ocr_packs_reviewed.json`) and dumps raw OCR detections for manual correction (`data_review/ocr_packs_raw.json`). A minimal UI lives in `ocr_review/` to edit/download reviewed JSON.
 - `config/item_values.yaml` - tweakable base values, categories, and scoring bands.
 - `config/player_profiles.yaml` - player profiles (weights for shards/speedups/vip/etc.) used by profile-aware analysis/planning.
 - `docs/VALUATION_STRATEGY.md`, `docs/GAME_MECHANICS.md`, `docs/IMAGE_ANALYSIS.md` - human context on pricing, game loops, and image handling.

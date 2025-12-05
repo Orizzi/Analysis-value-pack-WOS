@@ -12,6 +12,7 @@ IMAGES_PROCESSED_DIR = PROJECT_ROOT / "images_processed"
 SITE_DATA_DIR = PROJECT_ROOT / "site_data"
 LOG_DIR = PROJECT_ROOT / "logs"
 SCREENSHOTS_DIR = DATA_RAW_DIR / "screenshots"
+DATA_REVIEW_DIR = PROJECT_ROOT / "data_review"
 
 DEFAULT_CONFIG_PATH = CONFIG_DIR / "item_values.yaml"
 DEFAULT_PROCESSED_PACKS = DATA_PROCESSED_DIR / "packs.json"
@@ -28,3 +29,5 @@ DEFAULT_SITE_ANALYSIS_BY_CATEGORY = SITE_DATA_DIR / "pack_ranking_by_category.js
 DEFAULT_SITE_ANALYSIS_PROFILE = "pack_ranking_profile_{profile}.json"
 DEFAULT_SITE_VALIDATION_REPORT = SITE_DATA_DIR / "validation_report.json"
 DEFAULT_VALIDATION_CONFIG_PATH = CONFIG_DIR / "validation.yaml"
+DEFAULT_OCR_REVIEW_RAW = DATA_REVIEW_DIR / "ocr_packs_raw.json"
+DEFAULT_OCR_REVIEWED = DATA_REVIEW_DIR / "ocr_packs_reviewed.json"

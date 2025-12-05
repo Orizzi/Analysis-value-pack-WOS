@@ -12,11 +12,14 @@ from ..settings import (
     DATA_RAW_DIR,
     DEFAULT_PROCESSED_ITEMS,
     DEFAULT_PROCESSED_PACKS,
+    DEFAULT_OCR_REVIEW_RAW,
+    DEFAULT_OCR_REVIEWED,
     IMAGES_RAW_DIR,
     SCREENSHOTS_DIR,
 )
 from ..utils import ensure_dir, save_json, timestamp
 from .config import load_ingestion_config
+from .ocr_review import dump_raw_ocr_packs, load_reviewed_ocr_packs
 from .ocr import ingest_screenshots
 from .tabular import parse_file
 
@@ -49,6 +52,8 @@ def ingest_all(
     ocr_lang: str = "eng",
     ingestion_config_path: Path | None = None,
     ingestion_config_data: dict | None = None,
+    ocr_review_dump_path: Path | None = None,
+    ocr_reviewed_path: Path | None = None,
 ) -> Tuple[List[Pack], List[ItemDefinition]]:
     ensure_dir(raw_dir)
     ensure_dir(processed_dir)
@@ -70,13 +75,22 @@ def ingest_all(
         )
 
     if use_ocr:
-        packs.extend(
-            ingest_screenshots(
-                screenshots_dir=screenshots_dir or SCREENSHOTS_DIR,
-                default_currency=default_currency,
-                lang=ocr_lang,
-            )
+        reviewed_packs = load_reviewed_ocr_packs(ocr_reviewed_path or DEFAULT_OCR_REVIEWED)
+        reviewed_sources = {p.source_file for p in reviewed_packs if p.source_file}
+        packs.extend(reviewed_packs)
+
+        raw_ocr_packs = ingest_screenshots(
+            screenshots_dir=screenshots_dir or SCREENSHOTS_DIR,
+            default_currency=default_currency,
+            lang=ocr_lang,
         )
+        # Prefer reviewed packs; only keep raw OCR packs without a reviewed counterpart
+        for rp in raw_ocr_packs:
+            if rp.source_file and rp.source_file in reviewed_sources:
+                continue
+            packs.append(rp)
+        if raw_ocr_packs:
+            dump_raw_ocr_packs(raw_ocr_packs, lang=ocr_lang, path=ocr_review_dump_path or DEFAULT_OCR_REVIEW_RAW)
 
     item_defs = build_item_definitions(packs)
     logger.info("Ingested %s packs (%s items)", len(packs), sum(len(p.items) for p in packs))

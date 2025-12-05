@@ -25,6 +25,8 @@ def run(
     use_ocr_screenshots: bool = typer.Option(False, help="Enable OCR ingestion from screenshots directory"),
     screenshots_dir: Optional[Path] = typer.Option(None, help="Path to screenshots for OCR"),
     ocr_lang: str = typer.Option("eng", help="Language code for OCR (pytesseract)"),
+    ocr_review_dump: Optional[Path] = typer.Option(None, help="Path to write raw OCR review dump JSON"),
+    ocr_reviewed_path: Optional[Path] = typer.Option(None, help="Path to reviewed OCR packs JSON"),
     ingestion_config: Optional[Path] = typer.Option(None, help="Path to ingestion config (reference handling)"),
     reference_mode: Optional[str] = typer.Option(None, help="Override reference handling mode (tag/exclude/separate)"),
     summary_only: bool = typer.Option(False, help="Run without writing outputs; print summary"),
@@ -47,6 +49,8 @@ def run(
         summary_only=summary_only,
         log_file=log_file,
         enable_validation=not no_validation,
+        ocr_review_dump_path=ocr_review_dump,
+        ocr_reviewed_path=ocr_reviewed_path,
     )
     if with_analysis and not summary_only:
         from .analysis.ranking import analyze_from_site_data

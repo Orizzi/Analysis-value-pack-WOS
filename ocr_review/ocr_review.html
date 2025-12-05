@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OCR Pack Review</title>
+  <link rel="stylesheet" href="ocr_review.css" />
+</head>
+<body>
+  <main class="or-root">
+    <header class="or-header">
+      <div>
+        <h1>OCR Pack Review</h1>
+        <p class="or-muted">Load raw OCR JSON, correct fields, and download reviewed packs.</p>
+      </div>
+      <div class="or-controls">
+        <input type="file" id="or-file-input" accept="application/json" />
+        <button id="or-download" class="or-btn" disabled>Download reviewed JSON</button>
+      </div>
+    </header>
+
+    <section id="or-alert" class="or-alert" hidden></section>
+    <section id="or-list" class="or-list"></section>
+  </main>
+
+  <script src="ocr_review.js"></script>
+</body>
+</html>
