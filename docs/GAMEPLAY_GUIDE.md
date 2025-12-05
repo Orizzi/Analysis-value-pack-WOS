@@ -31,6 +31,7 @@ Players who want to decide which Whiteout Survival packs are “worth it,” com
 - **Chasing a specific item:** use the goal planner, e.g., `wos-pack-value goal --site-dir site_data --target "Hero X Shard" --amount 100 --budget 80 --profile f2p` to pick the cheapest-per-unit packs that deliver that item within your budget.
 - **Posting top packs to Discord:** generate a Markdown snippet with `wos-pack-value announce --site-dir site_data --top-n 5 --profile f2p --output-file site_data/discord_top.md`, then paste it into your server.
 - **Track changes between runs:** snapshot exports with `wos-pack-value run --with-analysis --history-root exports`, then diff against the latest snapshot with `wos-pack-value history-diff --history-root exports --current site_data/packs.json --output-file site_data/changes_since_last_run.json`.
+- **One-shot auto-run/commit:** `wos-pack-value auto-update --raw-dir data_raw --site-dir site_data --history-root exports --dry-run` to see what would be committed (remove `--dry-run` to add a git commit).
 
 ## Limitations & caveats
 - Values depend on assumptions in `config/item_values.yaml`, tier hints, and `gem_value_per_usd`.

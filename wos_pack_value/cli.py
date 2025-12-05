@@ -343,6 +343,30 @@ def history_diff(
 
 
 @app.command()
+def auto_update(
+    raw_dir: Path = typer.Option(..., help="Raw data directory"),
+    site_dir: Path = typer.Option(SITE_DATA_DIR, help="site_data output directory"),
+    history_root: Optional[Path] = typer.Option(None, help="Optional history root for snapshots"),
+    dry_run: bool = typer.Option(False, help="Show what would happen without git add/commit"),
+    commit_message: Optional[str] = typer.Option(None, help="Override commit message"),
+    extra_run_args: Optional[list[str]] = typer.Option(None, help="Extra args forwarded to `run` (e.g., --use-ocr-screenshots)"),
+):
+    """Run pipeline + analysis, then git-commit exports if changed."""
+    from .automation.auto_update import auto_update_and_commit
+
+    configure_logging()
+    code = auto_update_and_commit(
+        raw_dir=raw_dir,
+        site_dir=site_dir,
+        history_root=history_root,
+        dry_run=dry_run,
+        commit_message=commit_message,
+        extra_run_args=extra_run_args or [],
+    )
+    raise typer.Exit(code)
+
+
+@app.command()
 def sanity():
     """Quick sanity run with console logging."""
     configure_logging(level=logging.INFO)
