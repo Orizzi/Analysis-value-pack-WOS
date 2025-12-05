@@ -15,6 +15,7 @@ Analyse Whiteout Survival paid packs. Ingest mixed raw sources (Excel/CSV with m
 - `docs/QUICKSTART.md` – concise steps from clone to first run.
 - `analysis/` - ranking layer reading `site_data` exports and producing pack ranking JSONs.
 - `pack_explorer/` - static frontend (HTML/JS/CSS) that reads `site_data` JSONs (packs + rankings) and offers filtering/sorting/detail views. Configurable base path via `window.PACK_EXPLORER_BASE`. See `docs/PACK_EXPLORER.md`.
+- For navigation/rules as an AI agent, read `docs/AGENT_OVERVIEW.md`.
   - `valuation/` – config loader and scoring engine (`config.py`, `engine.py`, `pipeline.py`).
   - `export/` – site-facing JSON writer (`json_export.py`).
   - `pipeline.py` – top-level run orchestrator.

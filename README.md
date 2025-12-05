@@ -58,6 +58,7 @@ See `docs/AI_GUIDE.md` for a deeper, AI-focused explanation and extension guidan
 ## Pack Explorer (frontend)
 - Files in `pack_explorer/` consume `site_data/` JSON (packs + rankings) and render a browser UI with filters/sorting and detail modals.
 - Open `pack_explorer/pack_explorer.html` locally (or host it) after generating exports. If JSON lives elsewhere, set `window.PACK_EXPLORER_BASE` before loading the JS. See `docs/PACK_EXPLORER.md` for details.
+- For AI maintainers: start with `docs/AGENT_OVERVIEW.md` for navigation and rules.
 
 ## Development
 - Install deps: `.\.venv\Scripts\python -m pip install -r requirements.txt`
