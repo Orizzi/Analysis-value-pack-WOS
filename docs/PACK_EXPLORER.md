@@ -33,6 +33,7 @@ Static, JS-driven view that reads `site_data/` JSON exports and lets players bro
 - Sorting: rank overall, value per dollar, price, direction toggle.
 - Detail modal: items, values, category scores, reference flag.
 - Category dropdown is populated from `pack_ranking_by_category.json`.
+- For player-facing tips on using rankings, see `docs/GAMEPLAY_GUIDE.md`.
 
 ## Integration notes
 - Vanilla JS; no build step required.

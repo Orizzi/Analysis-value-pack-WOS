@@ -1,66 +1,47 @@
 # PackWhiteoutSurvivalPackValue
 
-Python toolkit to ingest Whiteout Survival pack data (Excel/CSV), normalize it, assign value scores, and export JSON ready for a static site.
+One-stop toolkit to ingest, value, rank, and explore Whiteout Survival packs (Excel/CSV/OCR) with static JSON exports and a browser-based Pack Explorer.
 
-## Quick start
+## Features
+- **Ingestion**: Excel/CSV with multi-table detection, merged-cell handling, event-shop support, image extraction, optional OCR screenshots, and reference/library tagging.
+- **Valuation**: Config-driven item values, price inference (hints + gem_value_per_usd + tier snapping), per-pack totals and scores.
+- **Analysis/Ranking**: Configurable weights produce overall and category-focused rankings (`pack_ranking_overall.json`, `pack_ranking_by_category.json`).
+- **CLI**: `wos-pack-value` to run ingestion -> valuation -> export -> analysis; summary-only mode and rich flags for OCR/reference handling.
+- **Pack Explorer**: Static HTML/JS/CSS (no build) that reads JSON exports for filtering/sorting/detail browsing.
+- **Docs & tests**: Human and AI guides, sample data in `examples/`, and pytest coverage.
 
+## Quickstart
 ```bash
 python -m venv .venv
 .\.venv\Scripts\python -m pip install -r requirements.txt
-.\.venv\Scripts\python -m pip install -e .  # optional but gives console script
-.\.venv\Scripts\python -m wos_pack_value.cli run --config config/item_values.yaml --raw-dir examples
+.\.venv\Scripts\python -m pip install -e .  # optional console script
+wos-pack-value run --raw-dir examples --with-analysis
 ```
 
-Useful commands:
+- Open `pack_explorer/pack_explorer.html` after the run to browse packs (set `window.PACK_EXPLORER_BASE` if JSON lives elsewhere).
+- Dry run without writes: `wos-pack-value run --raw-dir examples --summary-only`
+- Analyze existing exports: `wos-pack-value analyze --site-dir site_data --analysis-config config/analysis.yaml`
 
-- `python -m wos_pack_value.cli ingest --raw-dir data_raw` - ingestion only.
-- `python -m wos_pack_value.cli value --config config/item_values.yaml` - valuation only (uses processed packs).
-- `python -m wos_pack_value.cli export` - compute valuation then export site JSON.
-- `python -m wos_pack_value.cli sanity` - end-to-end smoke test with a short summary.
-- `python -m wos_pack_value.cli run --summary-only` - run without writing outputs; prints/logs summary.
-- `pytest` - run tests.
+## Project layout (high level)
+- `wos_pack_value/` – ingestion, valuation, analysis, CLI, exports.
+- `config/` – `item_values.yaml`, `ingestion.yaml`, `analysis.yaml`.
+- `site_data/` – JSON exports (packs/items/rankings).
+- `examples/` – sample workbook and OCR text.
+- `pack_explorer/` – static frontend (HTML/JS/CSS).
+- `docs/` – QUICKSTART, AI_GUIDE, DATA_MODEL, VALUATION_STRATEGY, IMAGE_ANALYSIS, PACK_EXPLORER, AGENT_OVERVIEW, GAMEPLAY_GUIDE.
 
-## Project layout
+## For contributors / AI agents
+- Start with `docs/AGENT_OVERVIEW.md` for navigation, rules, and recipes.
+- Dev setup: `python -m venv .venv && .\.venv\Scripts\python -m pip install -e .[ocr]`
+- Run tests: `python -m pytest`
+- Keep default CLI/config behavior intact; update docs and configs when changing valuation/analysis assumptions.
 
-- `wos_pack_value/` - package code (`ingestion`, `valuation`, `export`, CLI, pipeline orchestration).
-- `config/` - tweakable valuation inputs (`item_values.yaml`).
-- `config/ingestion.yaml` - reference sheet detection/handling.
-- `config/analysis.yaml` - ranking weights and analysis defaults.
-- `data_raw/` - drop Excel/CSV/JSON inputs here (ingestion scans this folder).
-- `data_processed/` - normalized outputs (`packs.json`, `items.json`, `valuations.json`).
-- `images_raw/`, `images_processed/` - extracted icons and cleaned variants.
-- `site_data/` - JSON exports for the future static site.
-- `logs/` - pipeline logs.
-- `tests/` - sample data and pytest coverage.
-- `examples/` - minimal example workbook to try the pipeline quickly.
-- `docs/` - AI guide, data model, valuation strategy, game mechanics, and image-analysis notes.
-- `pack_explorer/` - static frontend (HTML/JS/CSS) to browse packs and rankings.
+## For players
+- After generating exports, open `pack_explorer/pack_explorer.html` to browse rankings (set `window.PACK_EXPLORER_BASE` if JSON lives elsewhere).
+- See `docs/GAMEPLAY_GUIDE.md` for interpreting value per dollar, ranks, category-focused views, and practical buying tips.
 
-## Data flow
+## License
+- License selection is pending. Until a LICENSE is added, treat the repository as "all rights reserved" and coordinate with the maintainer before reuse.
 
-1. **Ingestion** scans `data_raw/`, reads CSV/Excel (with merged-cell handling), and extracts images when present.
-2. **Normalization** stores packs/items in `data_processed/`.
-3. **Valuation** loads `config/item_values.yaml`, computes pack totals, ratios, scores, and labels.
-4. **Export** writes site-ready JSON to `site_data/`.
-5. **Analysis** (optional) reads `site_data/` and produces ranking outputs (`pack_ranking_overall.json`, `pack_ranking_by_category.json`) based on configurable category weights.
-
-See `docs/AI_GUIDE.md` for a deeper, AI-focused explanation and extension guidance. For step-by-step instructions, read `docs/QUICKSTART.md`.
-
-## OCR & reference sheets
-- Enable OCR screenshots with `--use-ocr-screenshots` (and optional `--screenshots-dir`, `--ocr-lang`).
-- Reference/library sheets are controlled via `config/ingestion.yaml`; override the mode with `--reference-mode tag|exclude|separate`.
-
-## Analysis/ranking
-- Run after pipeline: `python -m wos_pack_value.cli run --with-analysis --raw-dir examples`
-- Or analyze existing exports: `python -m wos_pack_value.cli analyze --site-dir site_data --analysis-config config/analysis.yaml`
-- Outputs: `site_data/pack_ranking_overall.json` and `site_data/pack_ranking_by_category.json` with value_per_dollar, scores, and ranks.
-
-## Pack Explorer (frontend)
-- Files in `pack_explorer/` consume `site_data/` JSON (packs + rankings) and render a browser UI with filters/sorting and detail modals.
-- Open `pack_explorer/pack_explorer.html` locally (or host it) after generating exports. If JSON lives elsewhere, set `window.PACK_EXPLORER_BASE` before loading the JS. See `docs/PACK_EXPLORER.md` for details.
-- For AI maintainers: start with `docs/AGENT_OVERVIEW.md` for navigation and rules.
-
-## Development
-- Install deps: `.\.venv\Scripts\python -m pip install -r requirements.txt`
-- Run tests: `.\.venv\Scripts\python -m pytest`
-- CLI help: `python -m wos_pack_value.cli --help`
+## Changelog
+- See `CHANGELOG.md` for release history.
