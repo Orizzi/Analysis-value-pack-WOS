@@ -31,6 +31,7 @@ def run(
     log_file: Optional[Path] = typer.Option(None, help="Optional log file path"),
     with_analysis: bool = typer.Option(False, help="Run analysis ranking after pipeline"),
     analysis_config: Optional[Path] = typer.Option(None, help="Path to analysis config YAML/JSON"),
+    no_validation: bool = typer.Option(False, help="Skip validation checks/report"),
 ):
     """Run ingestion + valuation + export."""
     configure_logging(log_file=log_file)
@@ -45,6 +46,7 @@ def run(
         reference_mode_override=reference_mode,
         summary_only=summary_only,
         log_file=log_file,
+        enable_validation=not no_validation,
     )
     if with_analysis and not summary_only:
         from .analysis.ranking import analyze_from_site_data
