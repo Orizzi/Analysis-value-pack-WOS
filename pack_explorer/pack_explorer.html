@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pack Explorer</title>
+  <link rel="stylesheet" href="pack_explorer.css" />
+  <script>
+    // Adjust this if JSON lives elsewhere; relative to current page by default.
+    window.PACK_EXPLORER_BASE = window.PACK_EXPLORER_BASE || "./site_data/";
+  </script>
+</head>
+<body>
+  <main id="pack-explorer-root" class="pe-root">
+    <header class="pe-header">
+      <div>
+        <h1>Pack Explorer</h1>
+        <p class="pe-subtitle">Browse, filter, and rank Whiteout Survival packs.</p>
+      </div>
+      <div class="pe-controls">
+        <input id="pe-search" type="search" placeholder="Search packs..." />
+        <label><input type="checkbox" id="pe-exclude-ref" checked /> Exclude reference</label>
+        <label><input type="checkbox" id="pe-top-toggle" /> Show only top N</label>
+        <input id="pe-top-n" type="number" min="1" value="10" />
+      </div>
+      <div class="pe-controls">
+        <label>Sort by:
+          <select id="pe-sort">
+            <option value="rank_overall">Rank overall</option>
+            <option value="value_per_dollar">Value per dollar</option>
+            <option value="price">Price</option>
+          </select>
+        </label>
+        <label>Category focus:
+          <select id="pe-category">
+            <option value="">(none)</option>
+          </select>
+        </label>
+        <label>Sort direction:
+          <select id="pe-sort-dir">
+            <option value="asc">Ascending</option>
+            <option value="desc" selected>Descending</option>
+          </select>
+        </label>
+      </div>
+    </header>
+
+    <section id="pe-alert" class="pe-alert" hidden></section>
+
+    <section id="pe-list" class="pe-list"></section>
+  </main>
+
+  <div id="pe-modal" class="pe-modal" hidden>
+    <div class="pe-modal-content">
+      <button id="pe-modal-close" class="pe-close">×</button>
+      <div id="pe-modal-body"></div>
+    </div>
+  </div>
+
+  <script src="pack_explorer.js"></script>
+</body>
+</html>

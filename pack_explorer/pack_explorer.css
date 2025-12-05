@@ -1,0 +1,151 @@
+:root {
+  --pe-bg: #0f172a;
+  --pe-card: #1e293b;
+  --pe-border: #334155;
+  --pe-text: #e2e8f0;
+  --pe-accent: #22c55e;
+  --pe-muted: #94a3b8;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background: var(--pe-bg);
+  color: var(--pe-text);
+}
+
+.pe-root {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+.pe-header h1 {
+  margin: 0;
+}
+
+.pe-subtitle {
+  margin: 4px 0 12px;
+  color: var(--pe-muted);
+}
+
+.pe-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin: 6px 0;
+}
+
+input, select {
+  background: var(--pe-card);
+  color: var(--pe-text);
+  border: 1px solid var(--pe-border);
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+
+.pe-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.pe-card {
+  background: var(--pe-card);
+  border: 1px solid var(--pe-border);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.pe-card header {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pe-chip {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--pe-accent);
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 12px;
+}
+
+.pe-muted {
+  color: var(--pe-muted);
+  font-size: 12px;
+}
+
+.pe-btn {
+  cursor: pointer;
+  border: 1px solid var(--pe-border);
+  background: transparent;
+  color: var(--pe-text);
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+.pe-btn:hover {
+  border-color: var(--pe-accent);
+  color: var(--pe-accent);
+}
+
+.pe-alert {
+  background: #b91c1c;
+  color: #fee2e2;
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+
+.pe-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.pe-modal-content {
+  background: var(--pe-card);
+  border: 1px solid var(--pe-border);
+  border-radius: 12px;
+  padding: 16px;
+  max-width: 720px;
+  width: 92vw;
+  max-height: 90vh;
+  overflow: auto;
+}
+
+.pe-close {
+  float: right;
+  border: none;
+  background: transparent;
+  color: var(--pe-text);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.pe-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+.pe-table th, .pe-table td {
+  border-bottom: 1px solid var(--pe-border);
+  padding: 6px 4px;
+  text-align: left;
+}
+
+.pe-table th {
+  color: var(--pe-muted);
+  font-weight: 600;
+}

@@ -34,6 +34,7 @@ Useful commands:
 - `tests/` - sample data and pytest coverage.
 - `examples/` - minimal example workbook to try the pipeline quickly.
 - `docs/` - AI guide, data model, valuation strategy, game mechanics, and image-analysis notes.
+- `pack_explorer/` - static frontend (HTML/JS/CSS) to browse packs and rankings.
 
 ## Data flow
 
@@ -53,6 +54,10 @@ See `docs/AI_GUIDE.md` for a deeper, AI-focused explanation and extension guidan
 - Run after pipeline: `python -m wos_pack_value.cli run --with-analysis --raw-dir examples`
 - Or analyze existing exports: `python -m wos_pack_value.cli analyze --site-dir site_data --analysis-config config/analysis.yaml`
 - Outputs: `site_data/pack_ranking_overall.json` and `site_data/pack_ranking_by_category.json` with value_per_dollar, scores, and ranks.
+
+## Pack Explorer (frontend)
+- Files in `pack_explorer/` consume `site_data/` JSON (packs + rankings) and render a browser UI with filters/sorting and detail modals.
+- Open `pack_explorer/pack_explorer.html` locally (or host it) after generating exports. If JSON lives elsewhere, set `window.PACK_EXPLORER_BASE` before loading the JS. See `docs/PACK_EXPLORER.md` for details.
 
 ## Development
 - Install deps: `.\.venv\Scripts\python -m pip install -r requirements.txt`
