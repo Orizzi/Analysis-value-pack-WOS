@@ -13,6 +13,7 @@ Analyse Whiteout Survival paid packs. Ingest mixed raw sources (Excel/CSV with m
 - `ingestion/ocr.py` – optional OCR ingestion of screenshots (pytesseract).
 - `ingestion/config.py` – ingestion config loader (reference handling).
 - `docs/QUICKSTART.md` – concise steps from clone to first run.
+- `analysis/` – ranking layer reading `site_data` exports and producing pack ranking JSONs.
   - `valuation/` – config loader and scoring engine (`config.py`, `engine.py`, `pipeline.py`).
   - `export/` – site-facing JSON writer (`json_export.py`).
   - `pipeline.py` – top-level run orchestrator.
@@ -62,6 +63,7 @@ Column aliases of interest: `pack|bundle|pack_name` -> `pack_name`; `item|items|
 - `value_packs()` resolution order: per-item override → ingested `base_value` → category default (+ multiplier). Price inference uses pack price → `pack_price_hints` (substring) → gem_total/`gem_value_per_usd` → fallback, then snaps to the nearest configured tier when enabled. Price source (with snap info) is recorded in `pack.meta["price_source"]`.
 - OCR path: `ingestion/ocr.py` can convert screenshot text into packs. CLI flag `--use-ocr-screenshots` (with optional `--screenshots-dir`, `--ocr-lang`) enables this path. Without OCR libs installed, enablement will raise a clear error. Parsed items/price/pack names are fed into the same valuation/export pipeline.
 - Reference handling: sheets/blocks with names matching patterns (default: library/ref/lookup/rate) are tagged as reference. Depending on `reference_handling.mode`, they are excluded, tagged in main exports, or written separately.
+- Analysis/ranking: configured via `config/analysis.yaml` (weights, focus categories, VPD scaling, reference exclusion). Outputs live in `site_data/pack_ranking_overall.json` and `site_data/pack_ranking_by_category.json`.
 
 ## How to navigate (for AI agents)
 - Need end-to-end picture? Read `README.md` then `docs/QUICKSTART.md`.

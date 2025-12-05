@@ -13,6 +13,12 @@
 - Price source (including snap info) is recorded in `pack.meta["price_source"]`.
 - Reference/library sheets: detected via `config/ingestion.yaml` (`reference_handling.sheet_name_patterns`). Depending on `reference_handling.mode`, they are excluded from valuation/exports, tagged (`is_reference=True`), or written to a separate reference JSON. These are not intended to represent purchasable packs.
 
+## Analysis and ranking layer
+- Config: `config/analysis.yaml` controls analysis defaults (exclude_reference, min_price, max_value_per_dollar scaling, category weights, focus categories).
+- Metrics per pack: `value_per_dollar`, `overall_score`, `weighted_score`, `category_values`, and focus scores per configured category (e.g., shard, speedup, VIP).
+- Outputs: `site_data/pack_ranking_overall.json` (overall ranks) and `site_data/pack_ranking_by_category.json` (per focus category ranks). Reference packs can be excluded via config.
+- Use cases: “best value overall”, “best shard packs”, or “best speedup packs”. Interpretation is still heuristic—values depend on the current valuation config and max VPD scaling.
+
 ## Item value resolution
 1. **Per-item override** (`items` in config) – includes optional category override.
 2. **Ingested base_value** – e.g., `Gem per unit` from spreadsheets or `equivalent_gem_cost / quantity` for event-shop items.

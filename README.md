@@ -25,6 +25,7 @@ Useful commands:
 - `wos_pack_value/` - package code (`ingestion`, `valuation`, `export`, CLI, pipeline orchestration).
 - `config/` - tweakable valuation inputs (`item_values.yaml`).
 - `config/ingestion.yaml` - reference sheet detection/handling.
+- `config/analysis.yaml` - ranking weights and analysis defaults.
 - `data_raw/` - drop Excel/CSV/JSON inputs here (ingestion scans this folder).
 - `data_processed/` - normalized outputs (`packs.json`, `items.json`, `valuations.json`).
 - `images_raw/`, `images_processed/` - extracted icons and cleaned variants.
@@ -40,12 +41,18 @@ Useful commands:
 2. **Normalization** stores packs/items in `data_processed/`.
 3. **Valuation** loads `config/item_values.yaml`, computes pack totals, ratios, scores, and labels.
 4. **Export** writes site-ready JSON to `site_data/`.
+5. **Analysis** (optional) reads `site_data/` and produces ranking outputs (`pack_ranking_overall.json`, `pack_ranking_by_category.json`) based on configurable category weights.
 
 See `docs/AI_GUIDE.md` for a deeper, AI-focused explanation and extension guidance. For step-by-step instructions, read `docs/QUICKSTART.md`.
 
 ## OCR & reference sheets
 - Enable OCR screenshots with `--use-ocr-screenshots` (and optional `--screenshots-dir`, `--ocr-lang`).
 - Reference/library sheets are controlled via `config/ingestion.yaml`; override the mode with `--reference-mode tag|exclude|separate`.
+
+## Analysis/ranking
+- Run after pipeline: `python -m wos_pack_value.cli run --with-analysis --raw-dir examples`
+- Or analyze existing exports: `python -m wos_pack_value.cli analyze --site-dir site_data --analysis-config config/analysis.yaml`
+- Outputs: `site_data/pack_ranking_overall.json` and `site_data/pack_ranking_by_category.json` with value_per_dollar, scores, and ranks.
 
 ## Development
 - Install deps: `.\.venv\Scripts\python -m pip install -r requirements.txt`

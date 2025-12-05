@@ -1,0 +1,16 @@
+analysis:
+  exclude_reference: true
+  min_price: 0.0
+  max_value_per_dollar: 20.0
+  category_weights:
+    shard: 1.2
+    vip: 0.9
+    premium_currency: 1.0
+    speedup: 1.0
+    resource: 0.2
+    unknown: 0.5
+  focus_categories:
+    - shard
+    - vip
+    - premium_currency
+    - speedup

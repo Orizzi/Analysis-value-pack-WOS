@@ -29,10 +29,12 @@ def run(
     reference_mode: Optional[str] = typer.Option(None, help="Override reference handling mode (tag/exclude/separate)"),
     summary_only: bool = typer.Option(False, help="Run without writing outputs; print summary"),
     log_file: Optional[Path] = typer.Option(None, help="Optional log file path"),
+    with_analysis: bool = typer.Option(False, help="Run analysis ranking after pipeline"),
+    analysis_config: Optional[Path] = typer.Option(None, help="Path to analysis config YAML/JSON"),
 ):
     """Run ingestion + valuation + export."""
     configure_logging(log_file=log_file)
-    run_pipeline(
+    valued, _ = run_pipeline(
         config_path=config,
         raw_dir=raw_dir,
         site_dir=site_dir,
@@ -44,6 +46,10 @@ def run(
         summary_only=summary_only,
         log_file=log_file,
     )
+    if with_analysis and not summary_only:
+        from .analysis.ranking import analyze_from_site_data
+
+        analyze_from_site_data(site_dir or None, config_path=analysis_config, output_dir=site_dir or None)
 
 
 @app.command()
@@ -85,6 +91,20 @@ def export(
     valued, _ = valuate(config_path=config, **kwargs)
     export_site_json(valued_packs=valued, items=None, site_dir=site_dir or None)
     typer.echo("Exported site JSON")
+
+
+@app.command()
+def analyze(
+    site_dir: Optional[Path] = typer.Option(None, help="Directory containing site_data packs/items"),
+    analysis_config: Optional[Path] = typer.Option(None, help="Path to analysis config YAML/JSON"),
+    output_dir: Optional[Path] = typer.Option(None, help="Output directory for ranking exports"),
+):
+    """Run ranking analysis on existing site_data exports."""
+    from .analysis.ranking import analyze_from_site_data
+
+    configure_logging()
+    analyze_from_site_data(site_dir=site_dir or None, config_path=analysis_config, output_dir=output_dir or site_dir or None)
+    typer.echo("Analysis completed")
 
 
 @app.command()

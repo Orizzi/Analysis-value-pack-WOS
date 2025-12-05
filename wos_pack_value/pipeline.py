@@ -70,13 +70,13 @@ def run_pipeline(
         processed_path=(processed_dir or DATA_PROCESSED_DIR) / DEFAULT_PROCESSED_PACKS.name,
     )
     if not summary_only:
-        export_site_json(
-            valued_packs=valued,
-            items=item_defs,
-            site_dir=site_dir or SITE_DATA_DIR,
-            reference_mode=ref_mode,
-            reference_packs=reference_packs,
-        )
+    export_site_json(
+        valued_packs=valued,
+        items=item_defs,
+        site_dir=site_dir or SITE_DATA_DIR,
+        reference_mode=ref_mode,
+        reference_packs=reference_packs,
+    )
 
     summary = {
         "packs_total": len(packs),
