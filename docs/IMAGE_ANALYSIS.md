@@ -16,3 +16,4 @@
 ## Operational hints
 - Large spreadsheets with many embedded images can slow ingestion; extractions are logged in `logs/run.log`.
 - When OCR is added, keep it optional behind a CLI flag (e.g., `--with-ocr`) to avoid heavy dependencies in minimal runs.
+- Current OCR hook: place screenshots under `data_raw/screenshots/` and run the pipeline with `--use-ocr-screenshots` (optionally `--screenshots-dir` and `--ocr-lang`). If OCR dependencies are missing, a clear error is raised.

@@ -7,8 +7,16 @@ from pathlib import Path
 from typing import List, Tuple
 
 from ..models.domain import ItemDefinition, Pack
-from ..settings import DATA_PROCESSED_DIR, DATA_RAW_DIR, DEFAULT_PROCESSED_ITEMS, DEFAULT_PROCESSED_PACKS, IMAGES_RAW_DIR
+from ..settings import (
+    DATA_PROCESSED_DIR,
+    DATA_RAW_DIR,
+    DEFAULT_PROCESSED_ITEMS,
+    DEFAULT_PROCESSED_PACKS,
+    IMAGES_RAW_DIR,
+    SCREENSHOTS_DIR,
+)
 from ..utils import ensure_dir, save_json, timestamp
+from .ocr import ingest_screenshots
 from .tabular import parse_file
 
 logger = logging.getLogger(__name__)
@@ -35,6 +43,9 @@ def ingest_all(
     images_dir: Path = IMAGES_RAW_DIR,
     default_currency: str = "USD",
     persist: bool = True,
+    use_ocr: bool = False,
+    screenshots_dir: Path | None = None,
+    ocr_lang: str = "eng",
 ) -> Tuple[List[Pack], List[ItemDefinition]]:
     ensure_dir(raw_dir)
     ensure_dir(processed_dir)
@@ -46,6 +57,15 @@ def ingest_all(
             continue
         packs.extend(parse_file(path, images_dir=images_dir, default_currency=default_currency))
 
+    if use_ocr:
+        packs.extend(
+            ingest_screenshots(
+                screenshots_dir=screenshots_dir or SCREENSHOTS_DIR,
+                default_currency=default_currency,
+                lang=ocr_lang,
+            )
+        )
+
     item_defs = build_item_definitions(packs)
     logger.info("Ingested %s packs (%s items)", len(packs), sum(len(p.items) for p in packs))
 
@@ -55,4 +75,3 @@ def ingest_all(
         save_json(DEFAULT_PROCESSED_ITEMS, {"generated_at": timestamp(), "items": [i.dict() for i in item_defs]})
 
     return packs, item_defs
-

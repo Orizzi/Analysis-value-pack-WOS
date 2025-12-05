@@ -9,7 +9,8 @@ Analyse Whiteout Survival paid packs. Ingest mixed raw sources (Excel/CSV with m
 ## Repository layout
 
 - `wos_pack_value/`
-  - `ingestion/` – file scanning and tabular parsers (`tabular.py`, `pipeline.py`).
+- `ingestion/` – file scanning and tabular parsers (`tabular.py`, `pipeline.py`).
+- `ingestion/ocr.py` – optional OCR ingestion of screenshots (pytesseract).
   - `valuation/` – config loader and scoring engine (`config.py`, `engine.py`, `pipeline.py`).
   - `export/` – site-facing JSON writer (`json_export.py`).
   - `pipeline.py` – top-level run orchestrator.
@@ -21,6 +22,7 @@ Analyse Whiteout Survival paid packs. Ingest mixed raw sources (Excel/CSV with m
 - `data_processed/` - normalized packs/items + valuations JSON.
 - `site_data/` – static-site JSON exports.
 - `images_raw/`, `images_processed/` – extracted and cleaned icons.
+- `data_raw/screenshots/` – optional screenshot drop-zone for OCR ingestion.
 - `logs/` – rotating log files.
 - `tests/` – fixtures (`tests/data/sample_packs.csv`) and pytest coverage.
 
@@ -54,6 +56,7 @@ Column aliases of interest: `pack|bundle|pack_name` -> `pack_name`; `item|items|
 - `load_valuation_config()` loads YAML (deep-merged with defaults) including:
   - `items`, `categories`, `pack_price_hints`, `price_inference` (gem_value_per_usd, tier snapping), `price_defaults`, `valuation` bands/scale.
 - `value_packs()` resolution order: per-item override → ingested `base_value` → category default (+ multiplier). Price inference uses pack price → `pack_price_hints` (substring) → gem_total/`gem_value_per_usd` → fallback, then snaps to the nearest configured tier when enabled. Price source (with snap info) is recorded in `pack.meta["price_source"]`.
+- OCR path: `ingestion/ocr.py` can convert screenshot text into packs. CLI flag `--use-ocr-screenshots` (with optional `--screenshots-dir`, `--ocr-lang`) enables this path. Without OCR libs installed, enablement will raise a clear error. Parsed items/price/pack names are fed into the same valuation/export pipeline.
 - `valuate()` wrapper loads processed packs when needed and optionally persists `valuations.json`.
 
 ## Export (`wos_pack_value.export`)

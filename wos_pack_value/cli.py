@@ -22,10 +22,20 @@ def run(
     config: Optional[Path] = typer.Option(None, help="Path to valuation config YAML"),
     raw_dir: Optional[Path] = typer.Option(None, help="Override raw data directory"),
     site_dir: Optional[Path] = typer.Option(None, help="Override site_data output directory"),
+    use_ocr_screenshots: bool = typer.Option(False, help="Enable OCR ingestion from screenshots directory"),
+    screenshots_dir: Optional[Path] = typer.Option(None, help="Path to screenshots for OCR"),
+    ocr_lang: str = typer.Option("eng", help="Language code for OCR (pytesseract)"),
 ):
     """Run ingestion + valuation + export."""
     configure_logging()
-    run_pipeline(config_path=config, raw_dir=raw_dir, site_dir=site_dir)
+    run_pipeline(
+        config_path=config,
+        raw_dir=raw_dir,
+        site_dir=site_dir,
+        use_ocr=use_ocr_screenshots,
+        screenshots_dir=screenshots_dir,
+        ocr_lang=ocr_lang,
+    )
 
 
 @app.command()

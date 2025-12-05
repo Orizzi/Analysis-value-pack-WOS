@@ -20,6 +20,7 @@ from .settings import (
     DEFAULT_SITE_ITEMS,
     DEFAULT_SITE_PACKS,
     IMAGES_RAW_DIR,
+    SCREENSHOTS_DIR,
     SITE_DATA_DIR,
 )
 from .valuation.pipeline import valuate
@@ -34,6 +35,9 @@ def run_pipeline(
     processed_dir: Path | None = None,
     images_dir: Path | None = None,
     site_dir: Path | None = None,
+    use_ocr: bool = False,
+    screenshots_dir: Path | None = None,
+    ocr_lang: str = "eng",
 ) -> Tuple[List[ValuedPack], Dict]:
     configure_logging(log_file=log_file)
     logger.info("Starting pipeline")
@@ -41,6 +45,9 @@ def run_pipeline(
         raw_dir=raw_dir or DATA_RAW_DIR,
         processed_dir=processed_dir or DATA_PROCESSED_DIR,
         images_dir=images_dir or IMAGES_RAW_DIR,
+        use_ocr=use_ocr,
+        screenshots_dir=screenshots_dir or SCREENSHOTS_DIR,
+        ocr_lang=ocr_lang,
     )
     valuations_path = (processed_dir or DATA_PROCESSED_DIR) / DEFAULT_PROCESSED_VALUATIONS.name
     valued, config = valuate(
