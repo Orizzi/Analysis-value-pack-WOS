@@ -1,0 +1,87 @@
+games:
+  whiteout_survival:
+    presets:
+      - key: "f2p_global_10"
+        label: "F2P – Global value (10 EUR)"
+        type: "budget"
+        description: "Best overall value per euro for very low spenders."
+        budget: 10.0
+        currency: "EUR"
+        profile: "f2p"
+        include_reference: false
+
+      - key: "f2p_global_25"
+        label: "F2P – Global value (25 EUR)"
+        type: "budget"
+        description: "Stretch a small budget with the highest overall value packs."
+        budget: 25.0
+        currency: "EUR"
+        profile: "f2p"
+        include_reference: false
+
+      - key: "f2p_shards_20"
+        label: "F2P – Shards focus (20 EUR)"
+        type: "goal"
+        description: "Grab as many shards as possible around 20 EUR."
+        target_name: "Shard"
+        target_amount: 100
+        budget: 20.0
+        currency: "EUR"
+        profile: "f2p"
+        include_reference: false
+
+      - key: "mid_shards_50"
+        label: "Mid – Shards focus (50 EUR)"
+        type: "budget"
+        description: "Shard-biased packs for mid spenders."
+        budget: 50.0
+        currency: "EUR"
+        profile: "mid_spender"
+        include_reference: false
+
+      - key: "hero_shards_100"
+        label: "Hero shards target (100)"
+        type: "goal"
+        description: "Aim for ~100 shards within a moderate budget."
+        target_name: "Shard"
+        target_amount: 100
+        budget: 50.0
+        currency: "EUR"
+        profile: "mid_spender"
+        include_reference: false
+
+      - key: "vip_push_20"
+        label: "VIP push (20 EUR)"
+        type: "budget"
+        description: "Cheap VIP boost with a low budget."
+        budget: 20.0
+        currency: "EUR"
+        profile: "mid_spender"
+        include_reference: false
+
+      - key: "vip_push_50"
+        label: "VIP push (50 EUR)"
+        type: "budget"
+        description: "Stronger VIP push for mid/whale spenders."
+        budget: 50.0
+        currency: "EUR"
+        profile: "whale"
+        include_reference: false
+
+      - key: "speedups_rush_30"
+        label: "Speedups rush (30 EUR)"
+        type: "budget"
+        description: "Prioritize building/research/train speedups in a hurry."
+        budget: 30.0
+        currency: "EUR"
+        profile: "mid_spender"
+        include_reference: false
+
+      - key: "whale_best_100"
+        label: "Whale – Best up to 100 EUR"
+        type: "budget"
+        description: "High-budget pick for whales; reference packs optional."
+        budget: 100.0
+        currency: "EUR"
+        profile: "whale"
+        include_reference: false
